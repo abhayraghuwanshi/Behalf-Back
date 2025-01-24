@@ -25,14 +25,14 @@ public class ChatController {
         this.chatService = chatService;
     }
 
-    @PostMapping("/sessions")
+    @PostMapping("/session") // create new chat session
     public ChatSessionDTO createChatSession(@RequestBody ChatSession sessionRequest) {
         ChatSession session = chatService.createChatSession(sessionRequest.getQuestId(),
-                sessionRequest.getAuthor());
-        return new ChatSessionDTO(session.getId(), session.getQuestId(), session.getAuthor());
+                sessionRequest.getQuestAcceptor());
+        return new ChatSessionDTO(session.getId(), session.getQuestId(), session.getQuestAcceptor());
     }
 
-    @PostMapping("/{sessionId}/messages")
+    @PostMapping("/{sessionId}/messages") // post message per session
     public MessageDTO addMessage(@PathVariable Long sessionId,
             @RequestBody Message messageRequest) {
         Message message = chatService.addMessage(sessionId, messageRequest.getSender(),
@@ -41,7 +41,7 @@ public class ChatController {
                 message.getTimestamp().toString(), message.getMessage());
     }
 
-    @GetMapping("/{sessionId}/messages")
+    @GetMapping("/{sessionId}/messages") // get all messages per session
     public List<MessageDTO> getMessages(@PathVariable Long sessionId) {
         ChatSession session = chatService.getChatSession(sessionId);
         return session.getChats().stream()
@@ -50,4 +50,13 @@ public class ChatController {
                         message.getMessage()))
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/{userID}")
+    public List<ChatSessionDTO> fetch(@PathVariable Long userID){
+        return chatService.fetchChats(userID).stream().map(chatSession -> new ChatSessionDTO(chatSession.getId(),chatSession.getQuestId(), chatSession.getQuestAcceptor())).collect(Collectors.toList());
+    }
+
+
+
+
 }

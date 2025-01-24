@@ -1,6 +1,8 @@
 package com.behalf.delta.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import com.behalf.delta.entity.ChatSession;
 import com.behalf.delta.entity.Message;
@@ -22,10 +24,10 @@ public class ChatService {
         this.messageRepository = messageRepository;
     }
 
-    public ChatSession createChatSession(String questId, String author) {
+    public ChatSession createChatSession(long questId, long author) {
         ChatSession session = new ChatSession();
         session.setQuestId(questId);
-        session.setAuthor(author);
+        session.setQuestAcceptor(author);
         return chatSessionRepository.save(session);
     }
 
@@ -41,5 +43,9 @@ public class ChatService {
         message.setChatSession(session);
 
         return messageRepository.save(message);
+    }
+
+    public List<ChatSession> fetchChats(Long userId){
+        return chatSessionRepository.findAllByQuestAcceptor(userId);
     }
 }

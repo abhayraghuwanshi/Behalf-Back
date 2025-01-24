@@ -7,12 +7,12 @@ import lombok.Data;
 @Builder
 public class ChatSessionDTO {
     private Long id;
-    private String questId;
-    private String author;
+    private long questId;
+    private long questAcceptor;
 
-    public ChatSessionDTO(Long id, String questId, String author) {
+    public ChatSessionDTO(Long id, long questId, long questAcceptor) {
         this.id = id;
         this.questId = questId;
-        this.author = author;
+        this.questAcceptor = questAcceptor;
     }
 }

@@ -92,19 +92,34 @@ public class QuestService {
     }
 
     public void assignQuest(QuestAgreement questAgreement){
-        questAgreementRepo.saveAndFlush(questAgreement);
-        WorkFlow workflow = workflowClient.newWorkflowStub(WorkFlow.class, "Order_" + questAgreement.getQuestId());
-        workflow.signalQuestHunterAssigned();
+        try {
+            WorkFlow workflow = workflowClient.newWorkflowStub(WorkFlow.class, "Order_" + questAgreement.getQuestId());
+            workflow.signalQuestHunterAssigned();
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, e.getMessage());
+        }
+        try {
+            questAgreementRepo.saveAndFlush(questAgreement);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Database Exception has occur");
+        }
+
     }
 
     public void pay(Long workflowId){
+
         WorkFlow workflow = workflowClient.newWorkflowStub(WorkFlow.class, "Order_" + workflowId);
         workflow.signalPaymentDone();
     }
 
     public void questSuccess(Long workflowId){
-        WorkFlow workflow = workflowClient.newWorkflowStub(WorkFlow.class, "Order_" + workflowId);
-        workflow.signalQuestSuccess();
+
+        try {
+            WorkFlow workflow = workflowClient.newWorkflowStub(WorkFlow.class, "Order_" + workflowId);
+            workflow.signalQuestSuccess();
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, e.getMessage());
+        }
     }
 
 

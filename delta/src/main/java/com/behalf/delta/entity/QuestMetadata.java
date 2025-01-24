@@ -2,19 +2,19 @@ package com.behalf.delta.entity;
 
 import java.time.Instant;
 import java.util.Date;
-import com.behalf.delta.constants.City;
+import com.behalf.delta.constants.QuestCategory;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.*;
+import jakarta.validation.constraints.NotNull;
+
+import static jakarta.persistence.EnumType.STRING;
 
 @Entity
 @Data
@@ -27,11 +27,17 @@ public class QuestMetadata {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotEmpty
     private String author;
 
+    @NotEmpty
     private String questInstructions;
 
+    @NotEmpty
     private String questValidity;
+
+    @Enumerated(STRING)
+    private QuestCategory questLabel;
 
     private Integer questReward;
 
