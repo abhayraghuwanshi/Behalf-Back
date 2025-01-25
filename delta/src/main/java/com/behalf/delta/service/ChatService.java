@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import com.behalf.delta.entity.ChatSession;
+import com.behalf.delta.entity.QuestSession;
 import com.behalf.delta.entity.Message;
 import com.behalf.delta.repo.ChatSessionRepository;
 import com.behalf.delta.repo.MessageRepository;
@@ -14,7 +14,7 @@ public class ChatService {
     private final ChatSessionRepository chatSessionRepository;
     private final MessageRepository messageRepository;
 
-    public ChatSession getChatSession(Long id) {
+    public QuestSession getChatSession(Long id) {
         return chatSessionRepository.getReferenceById(id);
     }
 
@@ -24,15 +24,12 @@ public class ChatService {
         this.messageRepository = messageRepository;
     }
 
-    public ChatSession createChatSession(long questId, long author) {
-        ChatSession session = new ChatSession();
-        session.setQuestId(questId);
-        session.setQuestAcceptor(author);
-        return chatSessionRepository.save(session);
+    public QuestSession createChatSession(QuestSession questSession) {
+        return chatSessionRepository.save(questSession);
     }
 
     public Message addMessage(Long sessionId, String sender, String recipient, String messageText) {
-        ChatSession session = chatSessionRepository.findById(sessionId)
+        QuestSession session = chatSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new RuntimeException("Chat session not found"));
 
         Message message = new Message();
@@ -40,12 +37,12 @@ public class ChatService {
         message.setRecipient(recipient);
         message.setTimestamp(LocalDateTime.now());
         message.setMessage(messageText);
-        message.setChatSession(session);
+        message.setQuestSession(session);
 
         return messageRepository.save(message);
     }
 
-    public List<ChatSession> fetchChats(Long userId){
-        return chatSessionRepository.findAllByQuestAcceptor(userId);
+    public List<QuestSession> fetchChats(Long userId){
+        return chatSessionRepository.findAllByQuestAcceptorOrQuestCreatorId(userId, userId);
     }
 }

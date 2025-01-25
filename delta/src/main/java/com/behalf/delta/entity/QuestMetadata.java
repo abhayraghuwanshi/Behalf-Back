@@ -27,8 +27,8 @@ public class QuestMetadata {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
-    private String author;
+    @NotNull
+    private Long questCreatorId;
 
     @NotEmpty
     private String questInstructions;
@@ -44,10 +44,6 @@ public class QuestMetadata {
     private Date creationTimestamp;
 
     private Date lastModifiedTimestamp;
-
-    private String acceptor;
-
-    private Long paymentId;
 
     @PrePersist
     void onCreate() {

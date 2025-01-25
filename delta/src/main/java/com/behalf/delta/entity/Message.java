@@ -23,7 +23,7 @@ public class Message {
 
     @ManyToOne
     @JoinColumn(name = "chat_session_id", nullable = false)
-    private ChatSession chatSession;
+    private QuestSession questSession;
 
     // Getters and Setters
 }

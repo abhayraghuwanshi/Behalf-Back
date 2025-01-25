@@ -19,6 +19,8 @@ import io.temporal.client.WorkflowOptions;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Service
 @Slf4j
 public class QuestService {
@@ -120,6 +122,10 @@ public class QuestService {
         } catch (Exception e){
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, e.getMessage());
         }
+    }
+
+    public List<QuestMetadata> fetchQuest(List<Long> id){
+        return questRepository.findAllById(id);
     }
 
 
