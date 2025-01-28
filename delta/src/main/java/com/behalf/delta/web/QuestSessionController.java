@@ -7,18 +7,14 @@ import java.util.stream.Collectors;
 import com.behalf.delta.entity.QuestMetadata;
 import com.behalf.delta.entity.dto.QuestDto;
 import com.behalf.delta.service.QuestService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.web.bind.annotation.*;
 import com.behalf.delta.entity.QuestSession;
 import com.behalf.delta.entity.Message;
 import com.behalf.delta.entity.dto.ChatSessionDTO;
 import com.behalf.delta.entity.dto.MessageDTO;
 import com.behalf.delta.service.ChatService;
-
 
 
 @RestController
@@ -34,13 +30,12 @@ public class QuestSessionController {
     }
 
     @PostMapping() // create new chat session
-    public ChatSessionDTO createChatSession(@RequestBody QuestSession sessionRequest) {
+    public ChatSessionDTO createChatSession(@RequestBody QuestSession sessionRequest,  @AuthenticationPrincipal OidcUser user) {
         QuestSession questSession = chatService.createChatSession(sessionRequest);
         return ChatSessionDTO.builder()
                 .questStatus(questSession.getQuestStatus())
                 .questId(questSession.getQuestId())
                 .questCreatorId(questSession.getQuestCreatorId())
-                .id(questSession.getId())
                 .questAcceptor(questSession.getQuestAcceptor()).build();
     }
 

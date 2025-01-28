@@ -27,7 +27,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/quests")
-@Validated
 public class QuestController {
 
     @Autowired
