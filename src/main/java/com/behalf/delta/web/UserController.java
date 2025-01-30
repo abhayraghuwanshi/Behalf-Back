@@ -10,12 +10,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")
@@ -43,5 +44,12 @@ public class UserController {
         }
 
         return userInfo;
+    }
+
+    @PostMapping("/info")
+    public Map<Long, UserInformation> getUserInfoById(@RequestBody List<Long> ids) {
+        return userInformationRepo.findAllById(ids)
+                .stream()
+                .collect(Collectors.toMap(UserInformation::getId, user -> user));
     }
 }
