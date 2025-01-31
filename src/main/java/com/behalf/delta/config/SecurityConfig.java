@@ -50,7 +50,7 @@ public class SecurityConfig  {
 //        registry.addMapping("/**").allowedOrigins("http://localhost:3000").allowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("http://localhost:3000");  // Allow all origins for local development
+        config.addAllowedOrigin("https://behalf-front-production.up.railway.app");  // Allow all origins for local development
         config.addAllowedMethod("GET");  // Allow all HTTP methods (GET, POST, etc.)
         config.addAllowedMethod("POST");  // Allow all HTTP methods (GET, POST, etc.)
         config.addAllowedHeader("*");  // Allow all headers
