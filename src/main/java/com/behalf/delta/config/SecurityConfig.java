@@ -34,7 +34,6 @@ public class SecurityConfig  {
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/quests/fetch").permitAll()
                         .requestMatchers("/public/**", "/login/**").permitAll() // Public endpoints
-                        .requestMatchers("/api/quests/create").permitAll()
                         .requestMatchers("/api/user/info").permitAll()
                         .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated()              // Secure all other endpoints
