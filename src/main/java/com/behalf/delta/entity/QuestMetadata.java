@@ -1,5 +1,6 @@
 package com.behalf.delta.entity;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
 import com.behalf.delta.constants.QuestCategory;
@@ -21,7 +22,7 @@ import static jakarta.persistence.EnumType.STRING;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class QuestMetadata {
+public class QuestMetadata implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -9,16 +9,12 @@ import com.behalf.delta.exception.WorkflowException;
 import com.behalf.delta.repo.ChatSessionRepository;
 import com.behalf.delta.repo.MessageRepository;
 import com.behalf.delta.repo.QuestRepository;
-import com.behalf.delta.temporal.WorkFlow;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 
-import io.temporal.client.WorkflowClient;
-import io.temporal.client.WorkflowOptions;
-import io.temporal.serviceclient.WorkflowServiceStubs;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -28,11 +24,6 @@ import java.util.List;
 @Slf4j
 public class QuestService {
 
-    @Autowired
-    private WorkflowServiceStubs workflowServiceStubs;
-
-    @Autowired
-    private WorkflowClient workflowClient;
 
     @Autowired
     private QuestRepository questRepository;
@@ -48,11 +39,6 @@ public class QuestService {
         try {
             // Step 1: Persist the Quest to the repository
             QuestMetadata savedQuest = saveQuestToDatabase(quest);
-            long workflowId = savedQuest.getId();
-
-            // Step 2: Start Temporal workflow
-            startQuestWorkflow(workflowId);
-
             return savedQuest;
         } catch (DatabaseException e) {
             log.error("Database error: {}", e.getMessage(), e);
@@ -79,34 +65,9 @@ public class QuestService {
     }
 
     // Helper method to start the Temporal workflow
-    private void startQuestWorkflow(long workflowId) throws Exception {
-        try {
-            log.info("Starting workflow with ID: {}", workflowId);
-            WorkFlow workflow = createWorkFlowConnection(workflowId);
-            WorkflowClient.start(workflow::startWorkflow);
-            log.info("Workflow with ID: {} started successfully", workflowId);
-        } catch (Exception e) {
-            log.error("Failed to start workflow with ID: {}", workflowId, e);
-            throw new WorkflowException("Workflow initiation failed", e);
-        }
-    }
 
-    public WorkFlow createWorkFlowConnection(Long id) {
-        WorkflowOptions options = WorkflowOptions.newBuilder()
-                .setTaskQueue(WorkFlow.QUEUE_NAME)
-                .setWorkflowId("Order_" + id)
-                .build();
-
-        return workflowClient.newWorkflowStub(WorkFlow.class, options);
-    }
 
     public void assignQuest(QuestSession questSession){
-//        try {
-//            WorkFlow workflow = workflowClient.newWorkflowStub(WorkFlow.class, "Order_" + questAgreement.getQuestId());
-//            workflow.signalQuestHunterAssigned();
-//        } catch (Exception e){
-//            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, e.getMessage());
-//        }
         try {
              QuestSession qs = chatSessionRepository.saveAndFlush(questSession);
             messageRepository.save(Message.builder()
@@ -122,21 +83,7 @@ public class QuestService {
 
     }
 
-    public void pay(Long workflowId){
 
-        WorkFlow workflow = workflowClient.newWorkflowStub(WorkFlow.class, "Order_" + workflowId);
-        workflow.signalPaymentDone();
-    }
-
-    public void questSuccess(Long workflowId){
-
-        try {
-            WorkFlow workflow = workflowClient.newWorkflowStub(WorkFlow.class, "Order_" + workflowId);
-            workflow.signalQuestSuccess();
-        } catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, e.getMessage());
-        }
-    }
 
     public List<QuestMetadata> fetchQuest(List<Long> id){
         return questRepository.findAllById(id);

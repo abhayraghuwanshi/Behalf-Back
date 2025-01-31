@@ -9,6 +9,8 @@ import com.behalf.delta.service.QuestService;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired; // Add this import
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -44,16 +46,18 @@ public class QuestController {
     }
 
     @GetMapping("/fetch")
+    @Cacheable(value = "questCache", key = "'allList'")
     public List<QuestMetadata> getAllQuestById() {
         return questRepository.findAll();
     }
 
     @PostMapping("/create")
-    public ResponseEntity<QuestMetadata> createQuest(@RequestBody @Valid QuestMetadata quest)
+    @CacheEvict(value = "questCache", key = "'allList'")
+    public QuestMetadata createQuest(@RequestBody @Valid QuestMetadata quest)
             throws ResponseStatusException, HttpMessageNotReadableException
     {
             var res = questService.placeOrder(quest);
-            return ResponseEntity.ok(res);
+            return res;
     }
 
     @PostMapping("/agreement")
@@ -64,7 +68,6 @@ public class QuestController {
 
     @PostMapping("/success/{questId}")
     public ResponseEntity<String> finishQuest(@PathVariable Long questId){
-        questService.questSuccess(questId);
         return ResponseEntity.ok("Success");
     }
 }
