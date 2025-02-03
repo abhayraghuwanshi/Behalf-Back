@@ -34,9 +34,7 @@ public class SecurityConfig  {
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/quests/fetch").permitAll()
-                        .requestMatchers("/api/quests/sessions/**").permitAll()
                         .requestMatchers("/api/user/info").permitAll()
                         .requestMatchers("/public/**", "/login/**").permitAll() // Public endpoints
                             .requestMatchers("/api/**").permitAll()
@@ -55,7 +53,8 @@ public class SecurityConfig  {
 //        registry.addMapping("/**").allowedOrigins("http://localhost:3000").allowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("http://localhost:3000");  // Allow all origins for local development
+//        config.addAllowedOrigin("http://localhost:3000");  // Allow all origins for local development
+        config.addAllowedOrigin("https://behalf-front-production.up.railway.app");
         config.addAllowedMethod("GET");  // Allow all HTTP methods (GET, POST, etc.)
         config.addAllowedMethod("POST");  // Allow all HTTP methods (GET, POST, etc.)
         config.addAllowedHeader("*");  // Allow all headers
