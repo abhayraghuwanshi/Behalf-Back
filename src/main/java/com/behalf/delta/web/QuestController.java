@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.behalf.delta.entity.QuestSession;
 
+import com.behalf.delta.repo.QuestSessionRepository;
 import com.behalf.delta.service.QuestService;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
@@ -30,6 +31,9 @@ public class QuestController {
 
     @Autowired
     private QuestRepository questRepository;
+
+    @Autowired
+    private QuestSessionRepository questSessionRepository;
 
     @Autowired
     private QuestService questService;
@@ -66,8 +70,9 @@ public class QuestController {
             return ResponseEntity.ok("Success");
     }
 
-    @PostMapping("/success/{questId}")
-    public ResponseEntity<String> finishQuest(@PathVariable Long questId){
+    @PostMapping("/update")
+    public ResponseEntity<String> updateQuest(@RequestBody @Valid QuestSession questSession){
+        QuestSession qs = questSessionRepository.saveAndFlush(questSession);
         return ResponseEntity.ok("Success");
     }
 }

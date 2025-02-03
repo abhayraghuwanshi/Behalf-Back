@@ -46,9 +46,9 @@ public class UserController {
         return userInfo;
     }
 
-    @PostMapping("/info")
-    public Map<Long, UserInformation> getUserInfoById(@RequestBody List<Long> ids) {
-        return userInformationRepo.findAllById(ids)
+    @GetMapping("/info")
+    public Map<Long, UserInformation> getUserInfoById() {
+        return userInformationRepo.findAll()
                 .stream()
                 .collect(Collectors.toMap(UserInformation::getId, user -> user));
     }

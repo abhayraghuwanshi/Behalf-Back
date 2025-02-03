@@ -6,30 +6,30 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import com.behalf.delta.entity.QuestSession;
 import com.behalf.delta.entity.Message;
-import com.behalf.delta.repo.ChatSessionRepository;
+import com.behalf.delta.repo.QuestSessionRepository;
 import com.behalf.delta.repo.MessageRepository;
 
 @Service
 public class ChatService {
-    private final ChatSessionRepository chatSessionRepository;
+    private final QuestSessionRepository questSessionRepository;
     private final MessageRepository messageRepository;
 
     public QuestSession getChatSession(Long id) {
-        return chatSessionRepository.getReferenceById(id);
+        return questSessionRepository.getReferenceById(id);
     }
 
-    public ChatService(ChatSessionRepository chatSessionRepository,
-            MessageRepository messageRepository) {
-        this.chatSessionRepository = chatSessionRepository;
+    public ChatService(QuestSessionRepository questSessionRepository,
+                       MessageRepository messageRepository) {
+        this.questSessionRepository = questSessionRepository;
         this.messageRepository = messageRepository;
     }
 
     public QuestSession createChatSession(QuestSession questSession) {
-        return chatSessionRepository.save(questSession);
+        return questSessionRepository.save(questSession);
     }
 
     public Message addMessage(Long sessionId, String sender, String recipient, String messageText) {
-        QuestSession session = chatSessionRepository.findById(sessionId)
+        QuestSession session = questSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new RuntimeException("Chat session not found"));
 
         Message message = new Message();
@@ -43,6 +43,6 @@ public class ChatService {
     }
 
     public List<QuestSession> fetchChats(Long userId){
-        return chatSessionRepository.findAllByQuestAcceptorIdOrQuestCreatorId(userId, userId);
+        return questSessionRepository.findAllByQuestAcceptorIdOrQuestCreatorId(userId, userId);
     }
 }

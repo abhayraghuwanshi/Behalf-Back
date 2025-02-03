@@ -6,7 +6,7 @@ import com.behalf.delta.entity.QuestMetadata;
 import com.behalf.delta.entity.QuestSession;
 import com.behalf.delta.exception.DatabaseException;
 import com.behalf.delta.exception.WorkflowException;
-import com.behalf.delta.repo.ChatSessionRepository;
+import com.behalf.delta.repo.QuestSessionRepository;
 import com.behalf.delta.repo.MessageRepository;
 import com.behalf.delta.repo.QuestRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class QuestService {
     private QuestRepository questRepository;
 
     @Autowired
-    private ChatSessionRepository chatSessionRepository;
+    private QuestSessionRepository questSessionRepository;
 
     @Autowired
     private MessageRepository messageRepository;
@@ -69,7 +69,7 @@ public class QuestService {
 
     public void assignQuest(QuestSession questSession){
         try {
-             QuestSession qs = chatSessionRepository.saveAndFlush(questSession);
+             QuestSession qs = questSessionRepository.saveAndFlush(questSession);
             messageRepository.save(Message.builder()
                     .sender(questSession.getQuestAcceptorId().toString())
                     .message(questSession.getQuestRequestMsg())
@@ -83,15 +83,14 @@ public class QuestService {
 
     }
 
-
-
-    public List<QuestMetadata> fetchQuest(List<Long> id){
-        return questRepository.findAllById(id);
+    public List<QuestMetadata> fetchQuest(List<Long> longList){
+        return questRepository.findAllById(longList);
     }
 
     public List<QuestMetadata> fetchQuestByCreatorId(Long id){
         return questRepository.findAllByQuestCreatorId(id);
     }
+
 
 
 }
