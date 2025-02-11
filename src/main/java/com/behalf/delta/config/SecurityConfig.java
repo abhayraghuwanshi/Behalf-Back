@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -30,20 +31,26 @@ public class SecurityConfig  {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
+        http
                 .csrf(AbstractHttpConfigurer::disable)
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp ->
+                                csp.policyDirectives("default-src 'self'; frame-ancestors 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'none';"))
+                        .addHeaderWriter(new StaticHeadersWriter("X-Content-Type-Options", "nosniff")) // Prevents MIME sniffing
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny) // Prevents clickjacking (use `sameOrigin()` if needed)
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/quests/fetch").permitAll()
                         .requestMatchers("/api/user/info").permitAll()
                         .requestMatchers("/public/**", "/login/**").permitAll() // Public endpoints
-                            .requestMatchers("/api/**").permitAll()
-                        .anyRequest().authenticated()              // Secure all other endpoints
-                ).oauth2Login(oauth2 -> oauth2
+                        .requestMatchers("/api/**").permitAll()
+                        .anyRequest().authenticated() // Secure all other endpoints
+                )
+                .oauth2Login(oauth2 -> oauth2
                         .loginPage("/oauth2/authorization/google")
                         .failureHandler(this.authenticationFailureHandler())
-                        .successHandler(this.successHandler)).csrf(AbstractHttpConfigurer::disable);
-
+                        .successHandler(this.successHandler)
+                );
 
         return http.build();
     }
