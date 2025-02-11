@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -29,16 +31,17 @@ public class SecurityConfig  {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/quests/fetch").permitAll()
-                        .requestMatchers("/public/**", "/login/**").permitAll() // Public endpoints
                         .requestMatchers("/api/user/info").permitAll()
-                        .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/public/**", "/login/**").permitAll() // Public endpoints
+                            .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated()              // Secure all other endpoints
                 ).oauth2Login(oauth2 -> oauth2
                         .loginPage("/oauth2/authorization/google")
+                        .failureHandler(this.authenticationFailureHandler())
                         .successHandler(this.successHandler)).csrf(AbstractHttpConfigurer::disable);
 
 
@@ -50,7 +53,8 @@ public class SecurityConfig  {
 //        registry.addMapping("/**").allowedOrigins("http://localhost:3000").allowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("https://behalf-front-production.up.railway.app");  // Allow all origins for local development
+//        config.addAllowedOrigin("http://localhost:3000");  // Allow all origins for local development
+        config.addAllowedOrigin("https://behalf-front-production.up.railway.app");
         config.addAllowedMethod("GET");  // Allow all HTTP methods (GET, POST, etc.)
         config.addAllowedMethod("POST");  // Allow all HTTP methods (GET, POST, etc.)
         config.addAllowedHeader("*");  // Allow all headers
@@ -58,6 +62,13 @@ public class SecurityConfig  {
         config.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
+    }
+
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
+        failureHandler.setDefaultFailureUrl("http://localhost:3000"); // Redirect to React app on failure
+        return failureHandler;
     }
 
 

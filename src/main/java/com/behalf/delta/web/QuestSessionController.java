@@ -31,12 +31,13 @@ public class QuestSessionController {
     }
 
     @PostMapping() // create new chat session
-    public ChatSessionDTO createChatSession(@RequestBody QuestSession sessionRequest) {
+    public ChatSessionDTO createQuestSession(@RequestBody QuestSession sessionRequest) {
         QuestSession questSession = chatService.createChatSession(sessionRequest);
         return ChatSessionDTO.builder()
                 .questStatus(questSession.getQuestStatus())
                 .questId(questSession.getQuestId())
                 .questCreatorId(questSession.getQuestCreatorId())
+                .referId(questSession.getReferId())
                 .questAcceptorId(questSession.getQuestAcceptorId()).build();
     }
 
@@ -61,6 +62,8 @@ public class QuestSessionController {
 
     @GetMapping("/{userID}")
     public QuestDto fetchChatSession(@PathVariable Long userID) {
+        // Add more auth
+
         // Step 1: Fetch chat sessions for the user
         Map<Long, List<ChatSessionDTO>> chats = chatService.fetchChats(userID).stream()
                 .map(questSession -> ChatSessionDTO.builder()
@@ -69,6 +72,7 @@ public class QuestSessionController {
                         .questCreatorId(questSession.getQuestCreatorId())
                         .id(questSession.getId())
                         .questAcceptorId(questSession.getQuestAcceptorId())
+                        .referId(questSession.getReferId())
                         .build())
                 .collect(Collectors.groupingBy(ChatSessionDTO::getQuestId, Collectors.toList()));
 
@@ -91,6 +95,7 @@ public class QuestSessionController {
 
         return new QuestDto(metadataList, chats);
     }
+
 
 
 

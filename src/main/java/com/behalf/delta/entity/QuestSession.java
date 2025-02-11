@@ -28,6 +28,10 @@ public class QuestSession {
     @NotNull
     private Long questAcceptorId;
 
+    private Long referId;
+
+    private String referMessage;
+
     @OneToMany(mappedBy = "questSession", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> chats;
 
