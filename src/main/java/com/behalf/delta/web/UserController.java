@@ -3,6 +3,8 @@ package com.behalf.delta.web;
 
 import com.behalf.delta.entity.UserInformation;
 import com.behalf.delta.repo.UserInformationRepo;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -10,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -46,10 +49,25 @@ public class UserController {
         return userInfo;
     }
 
-    @PostMapping("/info")
-    public Map<Long, UserInformation> getUserInfoById(@RequestBody List<Long> ids) {
-        return userInformationRepo.findAllById(ids)
+    @GetMapping("/info")
+    public Map<Long, UserInformation> getUserInfoById() {
+        return userInformationRepo.findAll()
                 .stream()
                 .collect(Collectors.toMap(UserInformation::getId, user -> user));
     }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@AuthenticationPrincipal OidcUser oidcUser, HttpServletRequest request, HttpServletResponse response) {
+        if (oidcUser != null) {
+            new SecurityContextLogoutHandler().logout(request, response, null);
+
+            // ✅ Redirect user to Google's logout page (optional: redirect back to login page)
+            String logoutUrl = "https://accounts.google.com/Logout?continue=http://localhost:3000/login";
+
+            return ResponseEntity.ok(logoutUrl); // ✅ Send logout URL to frontend
+        }
+        return ResponseEntity.ok("Success");
+    }
+
 }

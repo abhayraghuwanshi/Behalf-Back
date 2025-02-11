@@ -1,5 +1,6 @@
 package com.behalf.delta.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,12 +17,13 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 public class SecurityConfig  {
 
-    @Value("setting.frontend-url")
-    private String frontendUrl;
+    private final AppProperties appProperties;
+
 
     private final CustomOAuth2SuccessHandler successHandler;
 
-    public SecurityConfig(CustomOAuth2SuccessHandler successHandler) {
+    public SecurityConfig(AppProperties appProperties, CustomOAuth2SuccessHandler successHandler) {
+        this.appProperties = appProperties;
         this.successHandler = successHandler;
     }
 
@@ -31,15 +33,26 @@ public class SecurityConfig  {
         http.csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/quests/fetch").permitAll()
+                        .requestMatchers("/api/quests/recommend").permitAll()
+                        .requestMatchers("/api/quests/detail").permitAll()
+                        .requestMatchers("/api/store/products").permitAll()
                         .requestMatchers("/public/**", "/login/**").permitAll() // Public endpoints
                         .requestMatchers("/api/user/info").permitAll()
-                        .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/api/v1/document/*/file/*").permitAll()
+                        .requestMatchers("/api/v1/document/*/file").authenticated()
                         .anyRequest().authenticated()              // Secure all other endpoints
                 ).oauth2Login(oauth2 -> oauth2
                         .loginPage("/oauth2/authorization/google")
-                        .successHandler(this.successHandler)).csrf(AbstractHttpConfigurer::disable);
+                        .successHandler(this.successHandler)).csrf(AbstractHttpConfigurer::disable)
+                .logout(logout -> logout
+                        .logoutUrl("/api/logout")  // ✅ Ensures backend logout is triggered
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        })
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")  // ✅ Clears cookies
+                );;
 
 
         return http.build();
@@ -47,10 +60,12 @@ public class SecurityConfig  {
 
     @Bean
     public CorsFilter corsFilter(){
-//        registry.addMapping("/**").allowedOrigins("http://localhost:3000").allowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("https://behalf-front-production.up.railway.app");  // Allow all origins for local development
+        if (appProperties.getFrontendUrl() == null || appProperties.getFrontendUrl().isBlank()) {
+            throw new IllegalStateException("Frontend URL cannot be null or empty!");
+        }
+        config.addAllowedOrigin(appProperties.getFrontendUrl());
         config.addAllowedMethod("GET");  // Allow all HTTP methods (GET, POST, etc.)
         config.addAllowedMethod("POST");  // Allow all HTTP methods (GET, POST, etc.)
         config.addAllowedHeader("*");  // Allow all headers

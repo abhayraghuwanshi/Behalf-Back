@@ -7,7 +7,7 @@ import com.behalf.delta.entity.QuestSession;
 import java.util.List;
 
 @Repository
-public interface ChatSessionRepository extends JpaRepository<QuestSession, Long> {
+public interface QuestSessionRepository extends JpaRepository<QuestSession, Long> {
 
     List<QuestSession> findAllByQuestAcceptorIdOrQuestCreatorId(Long id, Long creatorId);
 

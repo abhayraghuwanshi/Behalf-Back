@@ -3,36 +3,33 @@ package com.behalf.delta.web;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.behalf.delta.entity.QuestMetadata;
 import com.behalf.delta.entity.dto.QuestDto;
 import com.behalf.delta.service.QuestService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 import com.behalf.delta.entity.QuestSession;
 import com.behalf.delta.entity.Message;
 import com.behalf.delta.entity.dto.ChatSessionDTO;
 import com.behalf.delta.entity.dto.MessageDTO;
-import com.behalf.delta.service.ChatService;
+import com.behalf.delta.service.QuestSessionService;
 
 
 @RestController
 @RequestMapping("/api/quests/sessions")
 @Slf4j
 public class QuestSessionController {
-    private final ChatService chatService;
+    private final QuestSessionService questSessionService;
 
     private final QuestService questService;
 
-    public QuestSessionController(ChatService chatService, QuestService questService) {
-        this.chatService = chatService;
+    public QuestSessionController(QuestSessionService questSessionService, QuestService questService) {
+        this.questSessionService = questSessionService;
         this.questService = questService;
     }
 
     @PostMapping() // create new chat session
     public ChatSessionDTO createChatSession(@RequestBody QuestSession sessionRequest) {
-        QuestSession questSession = chatService.createChatSession(sessionRequest);
+        QuestSession questSession = questSessionService.createChatSession(sessionRequest);
         return ChatSessionDTO.builder()
                 .questStatus(questSession.getQuestStatus())
                 .questId(questSession.getQuestId())
@@ -43,7 +40,7 @@ public class QuestSessionController {
     @PostMapping("/{sessionId}/messages") // post message per session
     public MessageDTO addMessage(@PathVariable Long sessionId,
             @RequestBody Message messageRequest) {
-        Message message = chatService.addMessage(sessionId, messageRequest.getSender(),
+        Message message = questSessionService.addMessage(sessionId, messageRequest.getSender(),
                 messageRequest.getRecipient(), messageRequest.getMessage());
         return new MessageDTO(message.getId(), message.getSender(), message.getRecipient(),
                 message.getTimestamp().toString(), message.getMessage());
@@ -51,7 +48,7 @@ public class QuestSessionController {
 
     @GetMapping("/{sessionId}/messages") // get all messages per session
     public List<MessageDTO> getMessages(@PathVariable Long sessionId) {
-        QuestSession session = chatService.getChatSession(sessionId);
+        QuestSession session = questSessionService.getChatSession(sessionId);
         return session.getChats().stream()
                 .map(message -> new MessageDTO(message.getId(), message.getSender(),
                         message.getRecipient(), message.getTimestamp().toString(),
@@ -61,36 +58,11 @@ public class QuestSessionController {
 
     @GetMapping("/{userID}")
     public QuestDto fetchChatSession(@PathVariable Long userID) {
-        // Step 1: Fetch chat sessions for the user
-        Map<Long, List<ChatSessionDTO>> chats = chatService.fetchChats(userID).stream()
-                .map(questSession -> ChatSessionDTO.builder()
-                        .questStatus(questSession.getQuestStatus())
-                        .questId(questSession.getQuestId())
-                        .questCreatorId(questSession.getQuestCreatorId())
-                        .id(questSession.getId())
-                        .questAcceptorId(questSession.getQuestAcceptorId())
-                        .build())
-                .collect(Collectors.groupingBy(ChatSessionDTO::getQuestId, Collectors.toList()));
-
-        // Step 2: Fetch quests where the user has active chat sessions
-        List<QuestMetadata> metadataList = new ArrayList<>();
-        metadataList.addAll(questService.fetchQuest(new ArrayList<>(chats.keySet())));
-
-        log.info("metadataList" + metadataList.toString());
-
-
-        // Step 3: Fetch all quests created by the user (handling possible null)
-        List<QuestMetadata> createdQuests = Optional.ofNullable(questService.fetchQuestByCreatorId(userID))
-                .orElse(Collections.emptyList()) // Ensure it's never null
-                .stream()
-                .filter(q -> !chats.containsKey(q.getId())) // Exclude already fetched quests
-                .toList();
-
-        // Step 4: Merge all fetched quests
-        metadataList.addAll(createdQuests);
-
-        return new QuestDto(metadataList, chats);
+        return questService.fetchById(userID);
     }
+
+
+
 
 
 
