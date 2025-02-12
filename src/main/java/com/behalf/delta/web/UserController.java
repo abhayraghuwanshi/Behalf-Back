@@ -3,6 +3,8 @@ package com.behalf.delta.web;
 
 import com.behalf.delta.entity.UserInformation;
 import com.behalf.delta.repo.UserInformationRepo;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -10,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -51,5 +54,13 @@ public class UserController {
         return userInformationRepo.findAllById(ids)
                 .stream()
                 .collect(Collectors.toMap(UserInformation::getId, user -> user));
+    }
+
+    @PostMapping("/logout")
+    public String logout(@AuthenticationPrincipal OidcUser oidcUser, HttpServletRequest request, HttpServletResponse response) {
+        if (oidcUser != null) {
+            new SecurityContextLogoutHandler().logout(request, response, null);
+        }
+        return "Success";
     }
 }
