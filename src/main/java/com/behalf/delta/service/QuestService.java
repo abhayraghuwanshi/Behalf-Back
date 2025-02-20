@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -93,5 +94,19 @@ public class QuestService {
         return questRepository.findAllByQuestCreatorId(id);
     }
 
+    public String updateQuest(Long questSessionId, QuestSession questSession){
+
+            if ("SUCCESS".equals(questSession.getQuestStatus())){
+                Optional<QuestMetadata> qm = questRepository.findById(questSession.getQuestId());
+                if (qm.isPresent()){
+                    qm.get().setQuestStatus(questSession.getQuestStatus());
+                    questRepository.save(qm.get());
+                }
+                chatSessionRepository.save(questSession);
+                return "Success";
+            } else {
+            return "Failure";
+        }
+    }
 
 }

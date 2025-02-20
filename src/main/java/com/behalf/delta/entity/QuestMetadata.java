@@ -46,6 +46,8 @@ public class QuestMetadata implements Serializable {
 
     private Date lastModifiedTimestamp;
 
+    private String questStatus;
+
     @PrePersist
     void onCreate() {
         this.creationTimestamp = Date.from(Instant.now());

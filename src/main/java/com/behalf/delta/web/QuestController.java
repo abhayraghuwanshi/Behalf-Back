@@ -66,8 +66,9 @@ public class QuestController {
             return ResponseEntity.ok("Success");
     }
 
-    @PostMapping("/success/{questId}")
-    public ResponseEntity<String> finishQuest(@PathVariable Long questId){
-        return ResponseEntity.ok("Success");
+    @PostMapping("/update/{questSessionId}")
+    public ResponseEntity<String> updateStatus(@PathVariable Long questSessionId,  @RequestBody QuestSession questSession){
+        String status = questService.updateQuest(questSessionId, questSession);
+        return ResponseEntity.ok(status);
     }
 }

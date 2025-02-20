@@ -1,7 +1,10 @@
 package com.behalf.delta.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "travel_requests")
@@ -14,10 +17,16 @@ public class TravelRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String category;
+    @NotNull
+    private Long creatorId;
+    @NotNull
     private String fromLocation;
+    @NotNull
     private String toLocation;
+    @NotNull
     private String travelDate;
-    private Double price;
+
+    @OneToMany(mappedBy = "travelRequest", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 }
 
