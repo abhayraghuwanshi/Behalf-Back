@@ -1,5 +1,6 @@
 package com.behalf.delta.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -26,6 +27,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "travel_request_id", nullable = false)
+    @JsonIgnore
     private TravelRequest travelRequest;
 
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -2,14 +2,17 @@ package com.behalf.delta.web;
 
 import com.behalf.delta.entity.Comment;
 import com.behalf.delta.entity.TravelRequest;
+import com.behalf.delta.entity.dto.CommentDTO;
 import com.behalf.delta.repo.CommentRepository;
 import com.behalf.delta.repo.TravelRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/travel-requests")
@@ -34,8 +37,19 @@ public class TravelRequestController {
         return ResponseEntity.ok("Done");
     }
     @GetMapping("/{requestId}/comments")
-    public ResponseEntity<List<Comment>> getComments(@PathVariable Long requestId) {
-        return ResponseEntity.ok(commentRepository.findByTravelRequestId(requestId));
+    public ResponseEntity<List<CommentDTO>> getComments(@PathVariable Long requestId) {
+        List<Comment> comments = commentRepository.findTopLevelCommentsByTravelRequestId(requestId); // ✅ Fetch only parent comments
+        List<CommentDTO> commentDTOs = comments.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(commentDTOs);
+    }
+
+
+    private CommentDTO convertToDTO(Comment comment) {
+        List<CommentDTO> replies = comment.getReplies().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+
+        return new CommentDTO(comment.getId(), comment.getUsername(), comment.getText(), replies);
     }
 
     // Add a new comment
