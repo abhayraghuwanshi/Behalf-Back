@@ -56,11 +56,18 @@ public class UserController {
                 .collect(Collectors.toMap(UserInformation::getId, user -> user));
     }
 
+
     @PostMapping("/logout")
-    public String logout(@AuthenticationPrincipal OidcUser oidcUser, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<String> logout(@AuthenticationPrincipal OidcUser oidcUser, HttpServletRequest request, HttpServletResponse response) {
         if (oidcUser != null) {
             new SecurityContextLogoutHandler().logout(request, response, null);
+
+            // ✅ Redirect user to Google's logout page (optional: redirect back to login page)
+            String logoutUrl = "https://accounts.google.com/Logout?continue=http://localhost:3000/login";
+
+            return ResponseEntity.ok(logoutUrl); // ✅ Send logout URL to frontend
         }
-        return "Success";
+        return ResponseEntity.ok("Success");
     }
+
 }

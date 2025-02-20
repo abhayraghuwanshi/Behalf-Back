@@ -1,5 +1,6 @@
 package com.behalf.delta.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,7 +40,15 @@ public class SecurityConfig  {
                         .anyRequest().authenticated()              // Secure all other endpoints
                 ).oauth2Login(oauth2 -> oauth2
                         .loginPage("/oauth2/authorization/google")
-                        .successHandler(this.successHandler)).csrf(AbstractHttpConfigurer::disable);
+                        .successHandler(this.successHandler)).csrf(AbstractHttpConfigurer::disable)
+                .logout(logout -> logout
+                        .logoutUrl("/api/logout")  // ✅ Ensures backend logout is triggered
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        })
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")  // ✅ Clears cookies
+                );;
 
 
         return http.build();
