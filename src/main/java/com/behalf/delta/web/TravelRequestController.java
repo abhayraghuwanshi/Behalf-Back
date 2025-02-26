@@ -49,7 +49,7 @@ public class TravelRequestController {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
 
-        return new CommentDTO(comment.getId(), comment.getUsername(), comment.getText(), replies);
+        return new CommentDTO(comment.getId(), comment.getUsername(), comment.getText(),comment.getCreatedAt(), replies);
     }
 
     // Add a new comment
