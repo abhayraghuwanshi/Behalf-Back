@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.behalf.delta.entity.QuestSession;
 
+import com.behalf.delta.entity.dto.QuestMetadataDTO;
 import com.behalf.delta.service.QuestService;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
@@ -34,10 +35,6 @@ public class QuestController {
     @Autowired
     private QuestService questService;
 
-    @GetMapping
-    public List<QuestMetadata> getAllQuests() {
-        return questRepository.findAll();
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<QuestMetadata> getQuestById(@PathVariable Long id) {
@@ -47,8 +44,9 @@ public class QuestController {
 
     @GetMapping("/fetch")
     @Cacheable(value = "questCache", key = "'allList'")
-    public List<QuestMetadata> getAllQuestById() {
-        return questRepository.findAll();
+    public List<QuestMetadataDTO> getAllQuests() {
+        return questService.fetchAllQuest();
+
     }
 
     @PostMapping("/create")

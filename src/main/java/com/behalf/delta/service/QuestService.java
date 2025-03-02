@@ -4,11 +4,15 @@ package com.behalf.delta.service;
 import com.behalf.delta.entity.Message;
 import com.behalf.delta.entity.QuestMetadata;
 import com.behalf.delta.entity.QuestSession;
+import com.behalf.delta.entity.dto.ChatSessionDTO;
+import com.behalf.delta.entity.dto.QuestDto;
+import com.behalf.delta.entity.dto.QuestMetadataDTO;
 import com.behalf.delta.exception.DatabaseException;
-import com.behalf.delta.exception.WorkflowException;
+import com.behalf.delta.mapper.GeneralMapper;
 import com.behalf.delta.repo.ChatSessionRepository;
 import com.behalf.delta.repo.MessageRepository;
 import com.behalf.delta.repo.QuestRepository;
+import com.behalf.delta.repo.UserInformationRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,11 +23,17 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class QuestService {
+
+    @Autowired
+    private  ChatService chatService;
 
 
     @Autowired
@@ -35,6 +45,9 @@ public class QuestService {
     @Autowired
     private MessageRepository messageRepository;
 
+    @Autowired
+    private UserInformationRepo userInformationRepo;
+
 
     public QuestMetadata placeOrder(QuestMetadata quest) {
         try {
@@ -44,10 +57,8 @@ public class QuestService {
         } catch (DatabaseException e) {
             log.error("Database error: {}", e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Database error occurred");
-        } catch (WorkflowException e) {
-            log.error("Workflow error: {}", e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Workflow service error occurred");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             log.error("Unexpected error: {}", e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error occurred");
         }
@@ -107,6 +118,45 @@ public class QuestService {
             } else {
             return "Failure";
         }
+    }
+
+    public List<QuestMetadataDTO> fetchAllQuest(){
+//        List<QuestMetadata> questMetadatas = questRepository.findAll();
+//
+//        return questMetadatas.parallelStream().map(
+//                q -> GeneralMapper.convert(q,
+//                        userInformationRepo.findById(q.getQuestCreatorId()).orElse(null)))
+//                .toList();
+        return questRepository.fetchMergedQuestData();
+    }
+
+    public QuestDto fetchById (Long userID){
+            // Step 1: Fetch and map chat sessions for the user
+            List<ChatSessionDTO> chatSessionDTOs = chatService.fetchChats(userID).stream()
+                    .map(cs -> ChatSessionDTO.builder()
+                            .id(cs.getId())
+                            .questId(cs.getQuestId())
+                            .questCreatorId(cs.getQuestCreatorId())
+                            .questAcceptorId(cs.getQuestAcceptorId())
+                            .questStatus(cs.getQuestStatus())
+                            .build())
+                    .toList();
+
+            // Group chat sessions by questId
+            Map<Long, List<ChatSessionDTO>> chats = chatSessionDTOs.stream()
+                    .collect(Collectors.groupingBy(ChatSessionDTO::getQuestId));
+
+            // Step 2: Determine the involved quest IDs from chat sessions
+            Set<Long> involvedQuestIds = chats.keySet();
+
+            // Step 3: Fetch quests using a single query that returns quests either:
+            // - That the user is involved in (quest id in involvedQuestIds), OR
+            // - That the user created (questCreatorId equals userID)
+            List<QuestMetadata> quests = questRepository.fetchQuestsByUserInvolvement(userID, involvedQuestIds);
+
+            // Step 4: Return the merged result as a QuestDto
+            return new QuestDto(quests, chats);
+
     }
 
 }

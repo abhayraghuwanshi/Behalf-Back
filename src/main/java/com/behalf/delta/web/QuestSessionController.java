@@ -61,35 +61,36 @@ public class QuestSessionController {
 
     @GetMapping("/{userID}")
     public QuestDto fetchChatSession(@PathVariable Long userID) {
-        // Step 1: Fetch chat sessions for the user
-        Map<Long, List<ChatSessionDTO>> chats = chatService.fetchChats(userID).stream()
-                .map(questSession -> ChatSessionDTO.builder()
-                        .questStatus(questSession.getQuestStatus())
-                        .questId(questSession.getQuestId())
-                        .questCreatorId(questSession.getQuestCreatorId())
-                        .id(questSession.getId())
-                        .questAcceptorId(questSession.getQuestAcceptorId())
-                        .build())
-                .collect(Collectors.groupingBy(ChatSessionDTO::getQuestId, Collectors.toList()));
-
-        // Step 2: Fetch quests where the user has active chat sessions
-        List<QuestMetadata> metadataList = new ArrayList<>();
-        metadataList.addAll(questService.fetchQuest(new ArrayList<>(chats.keySet())));
-
-        log.info("metadataList" + metadataList.toString());
-
-
-        // Step 3: Fetch all quests created by the user (handling possible null)
-        List<QuestMetadata> createdQuests = Optional.ofNullable(questService.fetchQuestByCreatorId(userID))
-                .orElse(Collections.emptyList()) // Ensure it's never null
-                .stream()
-                .filter(q -> !chats.containsKey(q.getId())) // Exclude already fetched quests
-                .toList();
-
-        // Step 4: Merge all fetched quests
-        metadataList.addAll(createdQuests);
-
-        return new QuestDto(metadataList, chats);
+        return questService.fetchById(userID);
+//        // Step 1: Fetch chat sessions for the user
+//        Map<Long, List<ChatSessionDTO>> chats = chatService.fetchChats(userID).stream()
+//                .map(questSession -> ChatSessionDTO.builder()
+//                        .questStatus(questSession.getQuestStatus())
+//                        .questId(questSession.getQuestId())
+//                        .questCreatorId(questSession.getQuestCreatorId())
+//                        .id(questSession.getId())
+//                        .questAcceptorId(questSession.getQuestAcceptorId())
+//                        .build())
+//                .collect(Collectors.groupingBy(ChatSessionDTO::getQuestId, Collectors.toList()));
+//
+//        // Step 2: Fetch quests where the user has active chat sessions
+//        List<QuestMetadata> metadataList = new ArrayList<>();
+//        metadataList.addAll(questService.fetchQuest(new ArrayList<>(chats.keySet())));
+//
+//        log.info("metadataList" + metadataList.toString());
+//
+//
+//        // Step 3: Fetch all quests created by the user (handling possible null)
+//        List<QuestMetadata> createdQuests = Optional.ofNullable(questService.fetchQuestByCreatorId(userID))
+//                .orElse(Collections.emptyList()) // Ensure it's never null
+//                .stream()
+//                .filter(q -> !chats.containsKey(q.getId())) // Exclude already fetched quests
+//                .toList();
+//
+//        // Step 4: Merge all fetched quests
+//        metadataList.addAll(createdQuests);
+//
+//        return new QuestDto(metadataList, chats);
     }
 
 
