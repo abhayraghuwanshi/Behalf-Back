@@ -22,8 +22,5 @@ public class ChatSessionDTO {
 
     private Long questAcceptorId;
     private Long questCreatorId;
-
-
-
-
+    private Long referId;
 }
