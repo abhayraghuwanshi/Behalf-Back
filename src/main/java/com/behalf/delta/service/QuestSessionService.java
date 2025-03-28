@@ -10,7 +10,7 @@ import com.behalf.delta.repo.QuestSessionRepository;
 import com.behalf.delta.repo.MessageRepository;
 
 @Service
-public class ChatService {
+public class QuestSessionService {
     private final QuestSessionRepository questSessionRepository;
     private final MessageRepository messageRepository;
 
@@ -18,8 +18,8 @@ public class ChatService {
         return questSessionRepository.getReferenceById(id);
     }
 
-    public ChatService(QuestSessionRepository questSessionRepository,
-                       MessageRepository messageRepository) {
+    public QuestSessionService(QuestSessionRepository questSessionRepository,
+                               MessageRepository messageRepository) {
         this.questSessionRepository = questSessionRepository;
         this.messageRepository = messageRepository;
     }

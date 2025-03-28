@@ -1,5 +1,6 @@
 package com.behalf.delta.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,9 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -19,49 +17,55 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 public class SecurityConfig  {
 
-    @Value("setting.frontend-url")
-    private String frontendUrl;
+    private final AppProperties appProperties;
+
 
     private final CustomOAuth2SuccessHandler successHandler;
 
-    public SecurityConfig(CustomOAuth2SuccessHandler successHandler) {
+    public SecurityConfig(AppProperties appProperties, CustomOAuth2SuccessHandler successHandler) {
+        this.appProperties = appProperties;
         this.successHandler = successHandler;
     }
 
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .headers(headers -> headers
-                        .contentSecurityPolicy(csp ->
-                                csp.policyDirectives("default-src 'self'; frame-ancestors 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'none';"))
-                        .addHeaderWriter(new StaticHeadersWriter("X-Content-Type-Options", "nosniff")) // Prevents MIME sniffing
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny) // Prevents clickjacking (use `sameOrigin()` if needed)
-                )
+        http.csrf(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/quests/fetch").permitAll()
-                        .requestMatchers("/api/user/info").permitAll()
+                        .requestMatchers("/api/quests/recommend").permitAll()
+                        .requestMatchers("/api/quests/detail").permitAll()
+                        .requestMatchers("/api/store/products").permitAll()
                         .requestMatchers("/public/**", "/login/**").permitAll() // Public endpoints
-                        .requestMatchers("/api/**").permitAll()
-                        .anyRequest().authenticated() // Secure all other endpoints
-                )
-                .oauth2Login(oauth2 -> oauth2
+                        .requestMatchers("/api/user/info").permitAll()
+                        .requestMatchers("/api/v1/document/*/file/*").permitAll()
+                        .requestMatchers("/api/v1/document/*/file").authenticated()
+                        .anyRequest().authenticated()              // Secure all other endpoints
+                ).oauth2Login(oauth2 -> oauth2
                         .loginPage("/oauth2/authorization/google")
-                        .failureHandler(this.authenticationFailureHandler())
-                        .successHandler(this.successHandler)
-                );
+                        .successHandler(this.successHandler)).csrf(AbstractHttpConfigurer::disable)
+                .logout(logout -> logout
+                        .logoutUrl("/api/logout")  // ✅ Ensures backend logout is triggered
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        })
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")  // ✅ Clears cookies
+                );;
+
 
         return http.build();
     }
 
     @Bean
     public CorsFilter corsFilter(){
-//        registry.addMapping("/**").allowedOrigins("http://localhost:3000").allowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-//        config.addAllowedOrigin("http://localhost:3000");  // Allow all origins for local development
-        config.addAllowedOrigin("https://behalf-front-production.up.railway.app");
+        if (appProperties.getFrontendUrl() == null || appProperties.getFrontendUrl().isBlank()) {
+            throw new IllegalStateException("Frontend URL cannot be null or empty!");
+        }
+        config.addAllowedOrigin(appProperties.getFrontendUrl());
         config.addAllowedMethod("GET");  // Allow all HTTP methods (GET, POST, etc.)
         config.addAllowedMethod("POST");  // Allow all HTTP methods (GET, POST, etc.)
         config.addAllowedHeader("*");  // Allow all headers
@@ -69,13 +73,6 @@ public class SecurityConfig  {
         config.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
-    }
-
-    @Bean
-    public AuthenticationFailureHandler authenticationFailureHandler() {
-        SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
-        failureHandler.setDefaultFailureUrl("http://localhost:3000"); // Redirect to React app on failure
-        return failureHandler;
     }
 
 

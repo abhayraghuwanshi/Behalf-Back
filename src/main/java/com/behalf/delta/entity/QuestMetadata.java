@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
 import com.behalf.delta.constants.QuestCategory;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -34,17 +36,26 @@ public class QuestMetadata implements Serializable {
     @NotEmpty
     private String questInstructions;
 
-    @NotEmpty
-    private String questValidity;
-
-    @Enumerated(STRING)
-    private QuestCategory questLabel;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
+    private Date questValidity;
 
     private Integer questReward;
 
     private Date creationTimestamp;
 
     private Date lastModifiedTimestamp;
+
+    private String questStatus;
+
+    private String locationFrom;
+
+    @NotNull
+    private String locationTo;
+
+    private String questCurrency;
+
+    private String imageUrl;
+
 
     @PrePersist
     void onCreate() {

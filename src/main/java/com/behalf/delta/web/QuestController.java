@@ -5,7 +5,8 @@ import java.util.List;
 
 import com.behalf.delta.entity.QuestSession;
 
-import com.behalf.delta.repo.QuestSessionRepository;
+import com.behalf.delta.entity.dto.QuestMetadataDTO;
+import com.behalf.delta.service.QuestRecommendationService;
 import com.behalf.delta.service.QuestService;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
@@ -15,12 +16,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.behalf.delta.entity.QuestMetadata;
 import com.behalf.delta.repo.QuestRepository;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,26 +29,37 @@ public class QuestController {
     private QuestRepository questRepository;
 
     @Autowired
-    private QuestSessionRepository questSessionRepository;
-
-    @Autowired
     private QuestService questService;
 
-    @GetMapping
-    public List<QuestMetadata> getAllQuests() {
-        return questRepository.findAll();
-    }
+    @Autowired
+    private QuestRecommendationService recommendationService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<QuestMetadata> getQuestById(@PathVariable Long id) {
-        return questRepository.findById(id).map(Quest -> new ResponseEntity<>(Quest, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+
+    @GetMapping("/detail")
+    public QuestMetadataDTO getAllQuests( @RequestParam("postId") Integer questId) {
+        return questService.fetchASingleQuest(questId);
+
     }
 
     @GetMapping("/fetch")
     @Cacheable(value = "questCache", key = "'allList'")
-    public List<QuestMetadata> getAllQuestById() {
-        return questRepository.findAll();
+    public List<QuestMetadataDTO> getAllQuests() {
+        return questService.fetchAllQuest();
+
+    }
+
+
+    @GetMapping("/recommend")
+    public ResponseEntity<List<QuestMetadata>> getRecommendedQuests(
+            @RequestParam("questId") Long questId,
+            @RequestParam(defaultValue = "5") int limit,
+            @RequestParam(defaultValue = "true") boolean includeSameCreator) {
+
+        List<QuestMetadata> similarQuests =
+                recommendationService.getSimilarQuests(questId, limit, includeSameCreator);
+
+        return ResponseEntity.ok(similarQuests);
     }
 
     @PostMapping("/create")
@@ -70,9 +77,9 @@ public class QuestController {
             return ResponseEntity.ok("Success");
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<String> updateQuest(@RequestBody @Valid QuestSession questSession){
-        QuestSession qs = questSessionRepository.saveAndFlush(questSession);
-        return ResponseEntity.ok("Success");
+    @PostMapping("/update/{questSessionId}")
+    public ResponseEntity<String> updateStatus(@PathVariable Long questSessionId,  @RequestBody QuestSession questSession){
+        String status = questService.updateQuest(questSessionId, questSession);
+        return ResponseEntity.ok(status);
     }
 }
