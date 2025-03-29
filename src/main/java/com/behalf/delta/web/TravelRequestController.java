@@ -26,12 +26,12 @@ public class TravelRequestController {
 
     // Fetch comments for a travel request
 
-    @GetMapping
+    @GetMapping("/fetch")
     public ResponseEntity<List<TravelRequest>> fetchTravelQuest() {
         return ResponseEntity.ok(travelRequestRepository.findAll());
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<String> createTravelReq(@RequestBody TravelRequest travelRequest) {
         travelRequestRepository.save(travelRequest);
         return ResponseEntity.ok("Done");

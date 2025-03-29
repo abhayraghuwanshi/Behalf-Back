@@ -52,6 +52,10 @@ public class QuestMetadata implements Serializable {
     @NotNull
     private String locationTo;
 
+    private String locationToDetail;
+
+    private String locationFromDetail;
+
     private String questCurrency;
 
     private String imageUrl;

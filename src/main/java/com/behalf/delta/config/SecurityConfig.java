@@ -4,14 +4,19 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -30,17 +35,23 @@ public class SecurityConfig  {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+            http
+                .csrf(Customizer.withDefaults())
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
                         .requestMatchers("/api/quests/fetch").permitAll()
                         .requestMatchers("/api/quests/recommend").permitAll()
                         .requestMatchers("/api/quests/detail").permitAll()
                         .requestMatchers("/api/store/products").permitAll()
-                        .requestMatchers("/public/**", "/login/**").permitAll() // Public endpoints
+                        .requestMatchers("/login/**").permitAll() // Public endpoints
                         .requestMatchers("/api/user/info").permitAll()
                         .requestMatchers("/api/v1/document/*/file/*").permitAll()
-                        .requestMatchers("/api/v1/document/*/file").authenticated()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()              // Secure all other endpoints
                 ).oauth2Login(oauth2 -> oauth2
                         .loginPage("/oauth2/authorization/google")
@@ -67,11 +78,12 @@ public class SecurityConfig  {
         }
         config.addAllowedOrigin(appProperties.getFrontendUrl());
         config.addAllowedMethod("GET");  // Allow all HTTP methods (GET, POST, etc.)
-        config.addAllowedMethod("POST");  // Allow all HTTP methods (GET, POST, etc.)
-        config.addAllowedHeader("*");  // Allow all headers
+        config.addAllowedMethod("POST");  // Allow all HTTP methods (GET, POST, etc.)   
         config.addAllowedMethod("OPTIONS");
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
         config.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", config);
+
         return new CorsFilter(source);
     }
 
