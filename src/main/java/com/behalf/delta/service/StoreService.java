@@ -1,37 +1,26 @@
 package com.behalf.delta.service;
 
-
-import com.behalf.delta.repo.StoreRepository;
+import com.behalf.delta.entity.Store;
 import com.behalf.delta.entity.StoreOrder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.behalf.delta.entity.ProductInventory;
 import java.util.List;
 
-@Service
-public class StoreService {
+public interface StoreService {
+    // Order methods
+    List<StoreOrder> getOrdersByStatus(String status);
+    List<StoreOrder> getAllOrders();
+    StoreOrder placeOrder(StoreOrder storeOrder);
+    StoreOrder checkout(StoreOrder storeOrder);
+    List<StoreOrder> getOrdersByUser(Long userId);
 
-    @Autowired
-    private StoreRepository storeRepository;
+    // Store methods
+    Store createStore(Store store);
+    Store getStoreById(Long storeId);
+    List<Store> getAllStores();
 
-    public List<StoreOrder> getAllOrders() {
-        return storeRepository.findAll();
-    }
-
-    public List<StoreOrder> getOrdersByStatus(String status) {
-        return storeRepository.findByStatus(status);
-    }
-
-    public StoreOrder placeOrder(StoreOrder storeOrder) {
-        storeOrder.setStatus("PLACED");
-        return storeRepository.save(storeOrder);
-    }
-
-    public StoreOrder checkout(StoreOrder storeOrder) {
-        storeOrder.setStatus("CHECKEDOUT");
-        return storeRepository.save(storeOrder);
-    }
-
-    public List<StoreOrder> getOrdersByUser(Long userId) {
-        return storeRepository.findByUserId(userId);
-    }
+    // Inventory methods
+    ProductInventory addInventory(ProductInventory inventory);
+    ProductInventory updateInventory(ProductInventory inventory);
+    List<ProductInventory> getInventoryByProduct(Long productId);
+    List<ProductInventory> getInventoryByStore(Long storeId);
 }

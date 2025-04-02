@@ -80,6 +80,6 @@ public class FileService {
         }
     }
     public String getFileUrl(String bucketName, String fileName) {
-        return String.format("https://bucket-production-9ee7.up.railway.app/%s/%s", bucketName, fileName); // Adjust URL if MinIO is running on a different host or port
+        return String.format("%s/%s", bucketName, fileName); // Adjust URL if MinIO is running on a different host or port
     }
 }
