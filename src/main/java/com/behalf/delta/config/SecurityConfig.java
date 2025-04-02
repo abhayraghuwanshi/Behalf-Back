@@ -39,6 +39,7 @@ public class SecurityConfig  {
                 .csrf(Customizer.withDefaults())
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
@@ -51,7 +52,7 @@ public class SecurityConfig  {
                         .requestMatchers("/login/oauth2/code/google").permitAll()
                         .requestMatchers("/api/user/info").permitAll()
                         .requestMatchers("/api/v1/document/*/file/*").permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                         .anyRequest().authenticated()              // Secure all other endpoints
                 ).oauth2Login(oauth2 -> oauth2
                         .loginPage("/oauth2/authorization/google")
