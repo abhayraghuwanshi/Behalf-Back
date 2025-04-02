@@ -51,7 +51,7 @@ public class QuestController {
     }
 
     @PostMapping("/create")
-    public QuestMetadata createQuest(@RequestBody @Valid QuestMetadata quest) throws ResponseStatusException, HttpMessageNotReadableException {
+    public QuestMetadataDTO createQuest(@RequestBody @Valid QuestMetadata quest) throws ResponseStatusException, HttpMessageNotReadableException {
         return questService.createQuest(quest);
     }
 

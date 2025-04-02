@@ -3,11 +3,8 @@ package com.behalf.delta.entity;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
-import com.behalf.delta.constants.QuestCategory;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,7 +14,6 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import jakarta.validation.constraints.NotNull;
 
-import static jakarta.persistence.EnumType.STRING;
 
 @Entity
 @Data
