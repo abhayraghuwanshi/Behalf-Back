@@ -1,5 +1,6 @@
 package com.behalf.delta.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,14 +15,13 @@ public class ProductInventory {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private Store product;
-
-    @ManyToOne
     @JoinColumn(name = "store_id", nullable = false)
+    @JsonBackReference
     private Store store;
 
     private Integer quantity;
+
+    private Integer price;
 
     // Additional fields that might be useful
     private String sku; // Stock keeping unit

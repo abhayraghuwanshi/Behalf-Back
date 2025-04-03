@@ -8,13 +8,15 @@ import com.behalf.delta.exception.ResourceNotFoundException;
 import com.behalf.delta.repo.ProductInventoryRepository;
 import com.behalf.delta.repo.StoreOrderRepository;
 import com.behalf.delta.repo.StoreRepository;
+import com.behalf.delta.service.InventoryService;
+import com.behalf.delta.service.StoreOrderService;
 import com.behalf.delta.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class StoreServiceImpl implements StoreService {
+public class StoreServiceImpl implements StoreService, StoreOrderService, InventoryService {
 
     @Autowired
     private StoreRepository storeRepository;
@@ -28,6 +30,7 @@ public class StoreServiceImpl implements StoreService {
     // Existing methods implementation
     @Override
     public List<StoreOrder> getOrdersByStatus(String status) {
+
         return orderRepository.findByStatus(status);
     }
 
@@ -50,7 +53,7 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public List<StoreOrder> getOrdersByUser(Long userId) {
-        return orderRepository.fi(userId);
+        return orderRepository.findByUserId(userId);
     }
 
     // New methods implementation
@@ -60,14 +63,8 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public Store getStoreById(Long storeId) {
-        return storeRepository.findById(storeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Store not found with id: " + storeId));
-    }
-
-    @Override
-    public List<Store> getAllStores() {
-        return storeRepository.findAll();
+    public List<Store> getAllStores(String country) {
+        return storeRepository.findAllByCountry(country);
     }
 
     @Override
@@ -86,7 +83,7 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public List<ProductInventory> getInventoryByProduct(Long productId) {
-        return inventoryRepository.findByProductId(productId);
+        return inventoryRepository.findAllById(productId);
     }
 
     @Override

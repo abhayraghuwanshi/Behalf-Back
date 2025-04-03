@@ -47,7 +47,7 @@ public class SecurityConfig  {
                         .requestMatchers("/api/quests/fetch").permitAll()
                         .requestMatchers("/api/quests/recommend").permitAll()
                         .requestMatchers("/api/quests/detail").permitAll()
-                        .requestMatchers("/api/store/products").permitAll()
+                        .requestMatchers("/api/stores/fetch").permitAll()
                         .requestMatchers("/login/oauth2/code/google").permitAll()
                         .requestMatchers("/api/user/info").permitAll()
                         .requestMatchers("/api/v1/document/*/file/*").permitAll()

@@ -18,4 +18,6 @@ public class StoreOrder {
     private String address;
     private Double price;
     private String status;
+    private String country;
+
 }
