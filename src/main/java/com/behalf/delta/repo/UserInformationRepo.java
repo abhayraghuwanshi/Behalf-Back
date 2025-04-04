@@ -16,5 +16,10 @@ public interface UserInformationRepo extends JpaRepository<UserInformation, Long
 
     @Query("SELECT ui FROM UserInformation ui WHERE ui.id IN :ids")
     List<UserInformation> findAllById(@Param("ids") List<Long> ids);
+    @Query("SELECT u FROM UserInformation u WHERE " +
+            "LOWER(u.email) LIKE %:query% OR LOWER(u.firstName) LIKE %:query% OR LOWER(u.lastName) LIKE %:query%")
+    List<UserInformation> searchByNameOrEmail(@Param("query") String query);
+
+
 
 }
