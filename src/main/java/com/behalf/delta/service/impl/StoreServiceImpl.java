@@ -69,7 +69,13 @@ public class StoreServiceImpl implements StoreService, StoreOrderService, Invent
 
     @Override
     public ProductInventory addInventory(ProductInventory inventory) {
-        return inventoryRepository.save(inventory);
+        Store store = storeRepository.findById(inventory.getStore().getId())
+                .orElseThrow(() -> new RuntimeException("Store not found"));
+
+        // Attach the managed store entity
+        inventory.setStore(store);
+
+        return inventoryRepository.save(inventory); // Now save the inventory item
     }
 
     @Override
@@ -82,8 +88,8 @@ public class StoreServiceImpl implements StoreService, StoreOrderService, Invent
     }
 
     @Override
-    public List<ProductInventory> getInventoryByProduct(Long productId) {
-        return inventoryRepository.findAllById(productId);
+    public List<ProductInventory> getInventoryByProduct() {
+        return inventoryRepository.findAll();
     }
 
     @Override

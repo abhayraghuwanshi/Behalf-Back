@@ -7,6 +7,6 @@ import java.util.List;
 public interface InventoryService {
     ProductInventory addInventory(ProductInventory inventory);
     ProductInventory updateInventory(ProductInventory inventory);
-    List<ProductInventory> getInventoryByProduct(Long productId);
+    List<ProductInventory> getInventoryByProduct();
     List<ProductInventory> getInventoryByStore(Long storeId);
 }

@@ -54,7 +54,7 @@ public class QuestStoreController {
 
     // Create a new store - restricted to admin users
     @PostMapping("/stores")
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Store> createStore(@RequestBody Store store) {
         Store createdStore = storeService.createStore(store);
         return ResponseEntity.ok(createdStore);
@@ -89,9 +89,9 @@ public class QuestStoreController {
     }
 
     // Get inventory for a specific product across all stores
-    @GetMapping("/inventory/product/{productId}")
-    public ResponseEntity<List<ProductInventory>> getInventoryByProduct(@PathVariable Long productId) {
-        return ResponseEntity.ok(inventoryService.getInventoryByProduct(productId));
+    @GetMapping("/inventory")
+    public ResponseEntity<List<ProductInventory>> getInventoryByProduct() {
+        return ResponseEntity.ok(inventoryService.getInventoryByProduct());
     }
 
     // Get all inventory for a specific store
