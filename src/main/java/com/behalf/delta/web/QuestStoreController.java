@@ -24,7 +24,7 @@ public class QuestStoreController {
     private StoreOrderService storeOrderService;
 
     // Get all orders or filter by status (e.g., "OUT_OF_STOCK")
-    @GetMapping("/orders")
+    @GetMapping("store/orders")
     public List<StoreOrder> getOrders(@RequestParam(required = false) String status) {
         if(status != null) {
             return storeOrderService.getOrdersByStatus(status);
@@ -33,24 +33,23 @@ public class QuestStoreController {
     }
 
     // Place an order
-    @PostMapping("/orders")
+    @PostMapping("store/orders")
     public StoreOrder placeOrder(@RequestBody StoreOrder storeOrder) {
         return storeOrderService.placeOrder(storeOrder);
     }
 
     // Checkout – add additional information such as address, price, etc.
-    @PostMapping("/checkout")
+    @PostMapping("store/checkout")
     public StoreOrder checkout(@RequestBody StoreOrder storeOrder) {
         return storeOrderService.checkout(storeOrder);
     }
 
     // Display orders for a specific user
-    @GetMapping("/myorders")
+    @GetMapping("store/myorders")
     public List<StoreOrder> getMyOrders(@RequestParam Long userId) {
         return storeOrderService.getOrdersByUser(userId);
     }
 
-    // NEW ENDPOINTS
 
     // Create a new store - restricted to admin users
     @PostMapping("/stores")
@@ -65,7 +64,6 @@ public class QuestStoreController {
     public ResponseEntity<List<Store>> getAllStores(@RequestParam(required = false) String country) {
         return ResponseEntity.ok(storeService.getAllStores(country));
     }
-
 
 
 

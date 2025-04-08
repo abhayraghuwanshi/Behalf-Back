@@ -42,7 +42,9 @@ public class SecurityConfig  {
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html"
+                                "/swagger-ui.html",
+                                "/actuator",
+                                "/actuator/**"
                         ).permitAll()
                         .requestMatchers("/api/quests/fetch").permitAll()
                         .requestMatchers("/api/quests/recommend").permitAll()
