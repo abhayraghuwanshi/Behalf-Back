@@ -1,6 +1,6 @@
-package com.behalf.delta.repository;
+package com.behalf.store.repo;
 
-import com.behalf.delta.entity.UserRole;
+import com.behalf.store.model.UserRole;
 import com.behalf.delta.entity.UserInformation;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;

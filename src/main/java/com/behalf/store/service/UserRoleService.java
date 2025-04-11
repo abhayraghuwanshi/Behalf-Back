@@ -1,9 +1,9 @@
-package com.behalf.delta.service;
+package com.behalf.store.service;
 
 import com.behalf.delta.entity.UserInformation;
-import com.behalf.delta.entity.UserRole;
+import com.behalf.store.model.UserRole;
 import com.behalf.delta.repo.UserInformationRepo;
-import com.behalf.delta.repository.UserRoleRepository;
+import com.behalf.store.repo.UserRoleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;

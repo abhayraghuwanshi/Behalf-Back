@@ -1,6 +1,6 @@
 package com.behalf.delta.service;
 
-import com.behalf.delta.entity.ProductInventory;
+import com.behalf.store.model.ProductInventory;
 
 import java.util.List;
 

@@ -1,5 +1,6 @@
-package com.behalf.delta.entity;
+package com.behalf.store.model;
 
+import com.behalf.delta.entity.UserInformation;
 import jakarta.persistence.*;
 import lombok.*;
 

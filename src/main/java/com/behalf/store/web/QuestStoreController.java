@@ -1,11 +1,11 @@
-package com.behalf.delta.web;
+package com.behalf.store.web;
 
 import com.behalf.delta.service.InventoryService;
-import com.behalf.delta.service.StoreOrderService;
-import com.behalf.delta.service.StoreService;
-import com.behalf.delta.entity.Store;
-import com.behalf.delta.entity.StoreOrder;
-import com.behalf.delta.entity.ProductInventory;
+import com.behalf.store.service.StoreOrderService;
+import com.behalf.store.service.StoreService;
+import com.behalf.store.model.Store;
+import com.behalf.store.model.StoreOrder;
+import com.behalf.store.model.ProductInventory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

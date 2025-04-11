@@ -1,6 +1,6 @@
-package com.behalf.delta.repo;
+package com.behalf.store.repo;
 
-import com.behalf.delta.entity.StoreOrder;
+import com.behalf.store.model.StoreOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

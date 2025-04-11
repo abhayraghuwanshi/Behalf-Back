@@ -1,4 +1,4 @@
-package com.behalf.delta.entity;
+package com.behalf.store.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.behalf.delta.entity;
+package com.behalf.store.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;

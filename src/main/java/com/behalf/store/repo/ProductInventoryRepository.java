@@ -1,6 +1,6 @@
-package com.behalf.delta.repo;
+package com.behalf.store.repo;
 
-import com.behalf.delta.entity.ProductInventory;
+import com.behalf.store.model.ProductInventory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;

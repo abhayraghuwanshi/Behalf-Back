@@ -1,16 +1,14 @@
 // StoreServiceImpl Implementation
-package com.behalf.delta.service.impl;
+package com.behalf.store.service;
 
-import com.behalf.delta.entity.Store;
-import com.behalf.delta.entity.StoreOrder;
-import com.behalf.delta.entity.ProductInventory;
+import com.behalf.store.model.Store;
+import com.behalf.store.model.StoreOrder;
+import com.behalf.store.model.ProductInventory;
 import com.behalf.delta.exception.ResourceNotFoundException;
-import com.behalf.delta.repo.ProductInventoryRepository;
-import com.behalf.delta.repo.StoreOrderRepository;
-import com.behalf.delta.repo.StoreRepository;
+import com.behalf.store.repo.ProductInventoryRepository;
+import com.behalf.store.repo.StoreOrderRepository;
+import com.behalf.store.repo.StoreRepository;
 import com.behalf.delta.service.InventoryService;
-import com.behalf.delta.service.StoreOrderService;
-import com.behalf.delta.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
