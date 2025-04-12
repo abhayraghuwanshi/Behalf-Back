@@ -11,6 +11,5 @@ import java.util.List;
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Long> {
 
-    @Query("SELECT s FROM Store s WHERE :country IS NULL OR :country = '' OR s.country = :country")
-    List<Store> findAllByCountry(@Param("country") String country);
+    List<Store> findAllByCountry(String country);
 }

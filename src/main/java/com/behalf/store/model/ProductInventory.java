@@ -19,13 +19,14 @@ public class ProductInventory {
     @JsonBackReference
     private Store store;
 
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+
     private Integer quantity;
 
-    private Integer price;
-
-    // Additional fields that might be useful
-    private String sku; // Stock keeping unit
+    // Additional inventory-specific fields
     private String locationWithinStore; // e.g., "Aisle 5, Shelf 3"
-    private Integer reorderLevel; // Minimum quantity before reordering
-    private Integer reorderQuantity; // How many to order when restocking
+    private Integer reorderLevel;       // Minimum quantity before reordering
+    private Integer reorderQuantity;    // How many to order when restocking
 }
