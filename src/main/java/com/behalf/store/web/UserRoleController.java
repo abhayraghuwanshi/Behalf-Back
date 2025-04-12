@@ -1,7 +1,7 @@
 package com.behalf.store.web;
 
 import com.behalf.store.model.UserRole;
-import com.behalf.store.service.UserRoleService;
+import com.behalf.store.service.impl.UserRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

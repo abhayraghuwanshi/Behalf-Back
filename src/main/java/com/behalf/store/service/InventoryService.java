@@ -1,4 +1,4 @@
-package com.behalf.store.repo;
+package com.behalf.store.service;
 
 import com.behalf.store.model.ProductInventory;
 

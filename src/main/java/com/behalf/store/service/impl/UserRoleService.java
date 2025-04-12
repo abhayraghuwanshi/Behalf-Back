@@ -1,4 +1,4 @@
-package com.behalf.store.service;
+package com.behalf.store.service.impl;
 
 import com.behalf.delta.entity.UserInformation;
 import com.behalf.store.model.UserRole;
