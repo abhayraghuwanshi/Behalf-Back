@@ -6,6 +6,7 @@ import com.behalf.delta.entity.QuestMetadata;
 import com.behalf.delta.entity.QuestSession;
 import com.behalf.delta.entity.UserInformation;
 import com.behalf.delta.entity.dto.ChatSessionDTO;
+import com.behalf.delta.entity.dto.PageResponse;
 import com.behalf.delta.entity.dto.QuestDto;
 import com.behalf.delta.entity.dto.QuestMetadataDTO;
 import com.behalf.delta.exception.DatabaseException;
@@ -20,6 +21,9 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -149,11 +153,14 @@ public class QuestService {
         log.info("Evicting quest from cache with keys: locationTo={}, locationFrom={}", locationTo, locationFrom);
     }
 
-    @Cacheable(value = "questCache", key = "#userCountry")
-    public List<QuestMetadataDTO> fetchAllQuests(String userCountry) {
-        log.info("Cache miss for userCountry={}, fetching from database", userCountry);
-        return questRepository.fetchMergedQuestData(userCountry);
+    @Cacheable(value = "questCache", key = "#userCountry + '_' + #page + '_' + #size", condition = "#page == 0")
+    public PageResponse<QuestMetadataDTO> fetchAllQuests(String userCountry, int page, int size) {
+        log.info("Cache miss for userCountry={}, page={}, size={}, fetching from DB", userCountry, page, size);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<QuestMetadataDTO> res =  questRepository.fetchMergedQuestData(userCountry, pageable);
+        return new PageResponse<>(res);
     }
+
 
     // This is also a good opportunity to add a method to find quests by locatio
 

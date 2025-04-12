@@ -8,7 +8,7 @@ import com.behalf.delta.exception.ResourceNotFoundException;
 import com.behalf.store.repo.ProductInventoryRepository;
 import com.behalf.store.repo.StoreOrderRepository;
 import com.behalf.store.repo.StoreRepository;
-import com.behalf.delta.service.InventoryService;
+import com.behalf.store.repo.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;

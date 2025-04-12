@@ -1,6 +1,6 @@
 package com.behalf.store.web;
 
-import com.behalf.delta.service.InventoryService;
+import com.behalf.store.repo.InventoryService;
 import com.behalf.store.service.StoreOrderService;
 import com.behalf.store.service.StoreService;
 import com.behalf.store.model.Store;

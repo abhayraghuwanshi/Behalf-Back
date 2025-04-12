@@ -47,7 +47,7 @@ public class SecurityConfig  {
                                 "/actuator/**"
                         ).permitAll()
                         .requestMatchers("/gmail/oauth2/**").permitAll()
-                        .requestMatchers("/api/quests/fetch").permitAll()
+                        .requestMatchers("/api/quests/fetch**").permitAll()
                         .requestMatchers("/api/quests/recommend").permitAll()
                         .requestMatchers("/api/quests/detail").permitAll()
                         .requestMatchers("/api/stores/fetch").permitAll()

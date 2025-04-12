@@ -17,21 +17,15 @@ import java.util.Date;
 public class QuestMetadataDTO implements Serializable {
     private Long id;
     private Long questCreatorId;
-
     private String questInstructions;
     private Date questValidity;
-
     private Integer questReward;
     private Date creationTimestamp;
     private Date lastModifiedTimestamp;
     private String questStatus;
     private String imageUrl;
-
     private String locationFrom;
     private String locationTo;
     private String questCurrency;
-
     private UserInformation userInformation;
-
-
 }

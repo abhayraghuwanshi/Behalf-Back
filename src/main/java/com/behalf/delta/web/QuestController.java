@@ -2,6 +2,7 @@ package com.behalf.delta.web;
 
 import java.util.List;
 import com.behalf.delta.entity.QuestSession;
+import com.behalf.delta.entity.dto.PageResponse;
 import com.behalf.delta.entity.dto.QuestMetadataDTO;
 import com.behalf.delta.service.QuestRecommendationService;
 import com.behalf.delta.service.QuestService;
@@ -10,6 +11,7 @@ import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired; // Add this import
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +29,6 @@ public class QuestController {
     private final QuestRecommendationService recommendationService;
 
 
-
     @GetMapping("/detail")
     public QuestMetadataDTO getAllQuests( @RequestParam("postId") Integer questId) {
         return questService.fetchASingleQuest(questId);
@@ -35,9 +36,13 @@ public class QuestController {
     }
 
     @GetMapping("/fetch")
-    public List<QuestMetadataDTO> getAllQuests(@RequestParam(required = false, defaultValue = "India") String userCountry) {
-        return questService.fetchAllQuests(userCountry);
+    public PageResponse<QuestMetadataDTO> getAllQuests(
+            @RequestParam(required = false, defaultValue = "India") String userCountry,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return questService.fetchAllQuests(userCountry, page, size);
     }
+
 
 
     @GetMapping("/recommend")

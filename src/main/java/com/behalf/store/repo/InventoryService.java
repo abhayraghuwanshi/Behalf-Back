@@ -1,4 +1,4 @@
-package com.behalf.delta.service;
+package com.behalf.store.repo;
 
 import com.behalf.store.model.ProductInventory;
 
