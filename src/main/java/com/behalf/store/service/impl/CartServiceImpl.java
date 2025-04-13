@@ -1,18 +1,17 @@
 package com.behalf.store.service.impl;
 
 import com.behalf.store.mapper.ShopMapper;
-import com.behalf.store.model.Cart;
-import com.behalf.store.model.CartItem;
-import com.behalf.store.model.Product;
-import com.behalf.store.model.Store;
+import com.behalf.store.model.*;
 import com.behalf.store.model.dto.CartDTO;
-import com.behalf.store.repo.CartRepository;
-import com.behalf.store.repo.ProductRepository;
-import com.behalf.store.repo.StoreRepository;
+import com.behalf.store.repo.*;
 import com.behalf.store.service.CartService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -23,6 +22,8 @@ public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final StoreRepository storeRepository;
+    private final ProductPriceRepository productPriceRepository;
+    private  final DiscountRepository discountRepository;
 
     private Cart findOrCreateCart(Long userId, String sessionId) {
         return cartRepository.findByUserIdOrSessionId(userId, sessionId)
@@ -38,7 +39,23 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDTO getCart(Long userId, String sessionId) {
-        return ShopMapper.toDTO(findOrCreateCart(userId, sessionId));
+        CartDTO cartDTO =  ShopMapper.toDTO(findOrCreateCart(userId, sessionId));
+        LocalDate date = LocalDate.now();
+        cartDTO.getItems().forEach(cartItemDTO -> {
+            ProductPrice price = productPriceRepository.findActivePrice(cartItemDTO.getProductId(), cartItemDTO.getStoreId(), date);
+            Discount discount = discountRepository.findActiveDiscount(cartItemDTO.getProductId(), cartItemDTO.getStoreId(), date);
+            BigDecimal originalPrice = BigDecimal.valueOf(price.getPrice());
+            BigDecimal discountPrice = discount != null ? discount.getDiscountPrice() : originalPrice;
+
+            BigDecimal discountAmount = originalPrice.subtract(discountPrice);
+            Double discountPercent = discountAmount.divide(originalPrice, 2, RoundingMode.HALF_UP).doubleValue() * 100;
+            cartItemDTO.setOriginalPrice(originalPrice);
+            cartItemDTO.setDiscountPrice(discountPrice);
+            cartItemDTO.setDiscountAmount(discountAmount);
+            cartItemDTO.setDiscountPercent(discountPercent);
+            cartItemDTO.setCurrencyCode(price.getCurrencyCode());
+        });
+        return cartDTO;
     }
 
     @Override
