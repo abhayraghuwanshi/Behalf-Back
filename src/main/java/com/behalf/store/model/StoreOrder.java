@@ -37,7 +37,7 @@ public class StoreOrder {
 
     @ManyToOne
     @JoinColumn(name = "product_id", insertable = false, updatable = false)
-    private Product product;
+    private StoreOrderItem storeOrderItem;
 
     @ManyToOne
     @JoinColumn(name = "store_id", insertable = false, updatable = false)

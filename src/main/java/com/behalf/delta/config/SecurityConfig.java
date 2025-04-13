@@ -46,6 +46,8 @@ public class SecurityConfig  {
                                 "/actuator",
                                 "/actuator/**"
                         ).permitAll()
+                        .requestMatchers("/api/orders/place-from-cart**").permitAll()
+                        .requestMatchers("/api/cart/**").permitAll()
                         .requestMatchers("/gmail/oauth2/**").permitAll()
                         .requestMatchers("/api/quests/fetch**").permitAll()
                         .requestMatchers("/api/quests/recommend").permitAll()
