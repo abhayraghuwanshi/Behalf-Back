@@ -13,4 +13,6 @@ public interface StoreOrderRepository extends JpaRepository<StoreOrder, Long> {
     List<StoreOrder> findByStatus(String status);
 
     List<StoreOrder> findByUserId(Long userId);
+
+    List<StoreOrder> findByUserIdOrderByCreatedAtDesc(Long userId);
 }

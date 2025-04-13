@@ -111,6 +111,7 @@ public class ProductViewService {
                     .quantityAvailable(inventory.getQuantity())
                     .storeName(store.getName())
                     .storeLocation(store.getCity() + ", " + store.getCountry())
+                            .storeId(store.getId())
                     .build());
         }
 

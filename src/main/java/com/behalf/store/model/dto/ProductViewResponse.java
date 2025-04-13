@@ -28,4 +28,5 @@ public class ProductViewResponse {
 
     private String storeName;
     private String storeLocation;
+    private Long storeId;
 }

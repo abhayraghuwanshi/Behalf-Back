@@ -47,7 +47,9 @@ public class SecurityConfig  {
                                 "/actuator/**"
                         ).permitAll()
                         .requestMatchers("/api/orders/place-from-cart**").permitAll()
+                        .requestMatchers("/api/orders/user/**").permitAll()
                         .requestMatchers("/api/cart/**").permitAll()
+                        .requestMatchers("api/cart/update").permitAll()
                         .requestMatchers("/gmail/oauth2/**").permitAll()
                         .requestMatchers("/api/quests/fetch**").permitAll()
                         .requestMatchers("/api/quests/recommend").permitAll()
@@ -83,7 +85,8 @@ public class SecurityConfig  {
         }
         config.addAllowedOrigin(appProperties.getFrontendUrl());
         config.addAllowedMethod("GET");  // Allow all HTTP methods (GET, POST, etc.)
-        config.addAllowedMethod("POST");  // Allow all HTTP methods (GET, POST, etc.)   
+        config.addAllowedMethod("POST");  // Allow all HTTP methods (GET, POST, etc.)
+        config.addAllowedMethod("PUT");
         config.addAllowedMethod("OPTIONS");
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
         config.setAllowCredentials(true);

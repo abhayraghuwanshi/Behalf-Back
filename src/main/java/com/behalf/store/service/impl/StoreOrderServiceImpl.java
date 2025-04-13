@@ -2,6 +2,7 @@ package com.behalf.store.service.impl;
 
 import com.behalf.store.cons.OrderStatus;
 import com.behalf.store.model.*;
+import com.behalf.store.model.dto.StoreOrderDTO;
 import com.behalf.store.repo.*;
 import com.behalf.store.service.IStoreOrderService;
 import com.behalf.store.service.StoreOrderService;
@@ -22,7 +23,6 @@ public class StoreOrderServiceImpl implements IStoreOrderService {
     private final ProductPriceRepository productPriceRepository;
     private final DiscountRepository discountRepository;
     private final StoreOrderRepository storeOrderRepository;
-    private final StoreOrderItemRepository storeOrderItemRepository;
 
     @Override
     @Transactional
@@ -44,11 +44,12 @@ public class StoreOrderServiceImpl implements IStoreOrderService {
         double totalDiscounted = 0.0;
 
         List<StoreOrderItem> orderItems = new ArrayList<>();
+
         for (CartItem cartItem : cart.getItems()) {
             Product product = cartItem.getProduct();
             Store store = cartItem.getStore();
 
-            // Get latest price (filter by today’s date)
+            // Get latest valid price
             ProductPrice price = productPriceRepository
                     .findTopByProductIdAndStoreIdAndEffectiveFromBeforeAndEffectiveToAfterOrderByEffectiveFromDesc(
                             product.getId(), store.getId(), LocalDate.now(), LocalDate.now())
@@ -56,7 +57,7 @@ public class StoreOrderServiceImpl implements IStoreOrderService {
 
             double pricePerUnit = price.getPrice();
 
-            // Try to find active discount
+            // Optional discount
             Discount discount = discountRepository
                     .findTopByProductIdAndStoreIdAndStartDateBeforeAndEndDateAfterAndIsActiveTrue(
                             product.getId(), store.getId(), LocalDate.now(), LocalDate.now())
@@ -70,30 +71,40 @@ public class StoreOrderServiceImpl implements IStoreOrderService {
             double totalPrice = discountedPrice * qty;
 
             StoreOrderItem orderItem = new StoreOrderItem();
-            orderItem.setOrder(order);  // mapped via @ManyToOne
+            orderItem.setOrder(order); // set FK
             orderItem.setProduct(product);
             orderItem.setQuantity(qty);
             orderItem.setPricePerUnit(discountedPrice);
             orderItem.setTotalPrice(totalPrice);
+            orderItem.setDiscount(discount); // ✅ Set discount in child
+            orderItem.setStore(store);
+
             orderItems.add(orderItem);
 
             total += pricePerUnit * qty;
             totalDiscounted += totalPrice;
         }
 
+        // Set total prices
         order.setPrice(total);
         order.setDiscountPrice(totalDiscounted);
 
-        StoreOrder savedOrder = storeOrderRepository.save(order);
-        for (StoreOrderItem item : orderItems) {
-            item.setOrder(savedOrder);
-        }
-        storeOrderItemRepository.saveAll(orderItems);
+        // Attach items
+        order.setItems(orderItems);
 
-        // Optionally: clear cart
-        cart.getItems().clear();
+        // Save order (will cascade items)
+        StoreOrder savedOrder = storeOrderRepository.save(order);
+
+        // Clean up cart
+        cart.getItems().clear(); // orphanRemoval=true will delete cart items
         cartRepository.save(cart);
 
         return savedOrder;
     }
+
+    @Override
+    public List<StoreOrder> findByUserIdOrderByCreatedAtDesc(Long userId) {
+        return storeOrderRepository.findByUserIdOrderByCreatedAtDesc(userId);
+    }
+
 }

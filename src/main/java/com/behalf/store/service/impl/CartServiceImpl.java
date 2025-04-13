@@ -1,6 +1,6 @@
 package com.behalf.store.service.impl;
 
-import com.behalf.store.mapper.CartMapper;
+import com.behalf.store.mapper.ShopMapper;
 import com.behalf.store.model.Cart;
 import com.behalf.store.model.CartItem;
 import com.behalf.store.model.Product;
@@ -38,7 +38,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDTO getCart(Long userId, String sessionId) {
-        return CartMapper.toDTO(findOrCreateCart(userId, sessionId));
+        return ShopMapper.toDTO(findOrCreateCart(userId, sessionId));
     }
 
     @Override

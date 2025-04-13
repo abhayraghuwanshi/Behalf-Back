@@ -8,9 +8,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "store_orders")
 @Getter
 @Setter
 public class StoreOrder {
@@ -19,15 +20,13 @@ public class StoreOrder {
     private Long id;
 
     private Long userId;
-
     private String address;
-    private Double price;
+    private Double price;           // total original price
+    private Double discountPrice;   // total after discount
     private String country;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
-
-    private Double discountPrice;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -35,15 +34,8 @@ public class StoreOrder {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", insertable = false, updatable = false)
-    private StoreOrderItem storeOrderItem;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StoreOrderItem> items;
 
-    @ManyToOne
-    @JoinColumn(name = "store_id", insertable = false, updatable = false)
-    private Store store;
 
-    @ManyToOne
-    @JoinColumn(name = "discount_id", insertable = false, updatable = false)
-    private Discount discount;
 }
