@@ -49,6 +49,8 @@ public class SecurityConfig  {
                         .requestMatchers("/api/orders/place-from-cart**").permitAll()
                         .requestMatchers("/api/orders/user/**").permitAll()
                         .requestMatchers("/api/cart/**").permitAll()
+                        .requestMatchers("/api/product-prices").permitAll()
+                        .requestMatchers("/api/product-prices/**").permitAll()
                         .requestMatchers("api/cart/update").permitAll()
                         .requestMatchers("/gmail/oauth2/**").permitAll()
                         .requestMatchers("/api/quests/fetch**").permitAll()
