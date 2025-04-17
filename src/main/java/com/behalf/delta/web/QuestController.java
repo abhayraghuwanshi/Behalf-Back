@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired; // Add this impor
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.behalf.delta.entity.QuestMetadata;
 import org.springframework.web.server.ResponseStatusException;
@@ -56,17 +57,21 @@ public class QuestController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("@securityService.isSameUser(authentication.principal.email, #quest.questCreatorId)")
     public QuestMetadataDTO createQuest(@RequestBody @Valid QuestMetadata quest) throws ResponseStatusException, HttpMessageNotReadableException {
+
         return questService.createQuest(quest);
     }
 
     @PostMapping("/agreement")
+    @PreAuthorize("@securityService.isSameUser(authentication.principal.email, #questAgreement.questAcceptorId)")
     public ResponseEntity<String> assignedQuest(@RequestBody @Valid QuestSession questAgreement) throws ResponseStatusException, ValidationException {
             questService.assignQuest(questAgreement);
             return ResponseEntity.ok("Success");
     }
 
     @PostMapping("/update/{questSessionId}")
+    @PreAuthorize("@securityService.isSameUser(authentication.principal.email, #questSession.questCreatorId)")
     public ResponseEntity<String> updateStatus(@PathVariable Long questSessionId,  @RequestBody QuestSession questSession){
         String status = questService.updateQuest(questSessionId, questSession);
         return ResponseEntity.ok(status);

@@ -1,7 +1,6 @@
 package com.behalf.delta.config;
 
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,7 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -64,7 +62,8 @@ public class SecurityConfig  {
                         .anyRequest().authenticated()              // Secure all other endpoints
                 ).oauth2Login(oauth2 -> oauth2
                         .loginPage("/oauth2/authorization/google")
-                        .successHandler(this.successHandler)).csrf(AbstractHttpConfigurer::disable)
+                        .successHandler(this.successHandler))
+                    .csrf(AbstractHttpConfigurer::disable)
                 .logout(logout -> logout
                         .logoutUrl("/api/logout")  // ✅ Ensures backend logout is triggered
                         .logoutSuccessHandler((request, response, authentication) -> {
