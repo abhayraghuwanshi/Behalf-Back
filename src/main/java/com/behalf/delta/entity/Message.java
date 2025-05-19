@@ -31,6 +31,5 @@ public class Message {
     @JoinColumn(name = "chat_session_id", nullable = false)
     private QuestSession questSession;
 
-    // Getters and Setters
 }
 
