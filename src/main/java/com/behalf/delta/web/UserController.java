@@ -56,6 +56,11 @@ public class UserController {
                 .collect(Collectors.toMap(UserInformation::getId, user -> user));
     }
 
+    @GetMapping("/search")
+    public List<UserInformation> searchUsers(@RequestParam String query) {
+        return userInformationRepo.searchByNameOrEmail(query.toLowerCase());
+    }
+
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@AuthenticationPrincipal OidcUser oidcUser, HttpServletRequest request, HttpServletResponse response) {

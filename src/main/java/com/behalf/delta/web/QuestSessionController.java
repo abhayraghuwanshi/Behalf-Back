@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.behalf.delta.entity.dto.QuestDto;
 import com.behalf.delta.service.QuestService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.behalf.delta.entity.QuestSession;
 import com.behalf.delta.entity.Message;
@@ -28,6 +29,7 @@ public class QuestSessionController {
     }
 
     @PostMapping() // create new chat session
+    @PreAuthorize("@securityService.isSameUser(authentication.principal.email, #sessionRequest.questAcceptorId)")
     public ChatSessionDTO createChatSession(@RequestBody QuestSession sessionRequest) {
         QuestSession questSession = questSessionService.createChatSession(sessionRequest);
         return ChatSessionDTO.builder()
@@ -38,6 +40,7 @@ public class QuestSessionController {
     }
 
     @PostMapping("/{sessionId}/messages") // post message per session
+//    @PreAuthorize("@securityService.isSameUser(authentication.principal.email, #messageRequest.questAcceptorId)")
     public MessageDTO addMessage(@PathVariable Long sessionId,
             @RequestBody Message messageRequest) {
         Message message = questSessionService.addMessage(sessionId, messageRequest.getSender(),

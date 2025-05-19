@@ -1,7 +1,6 @@
 package com.behalf.delta.config;
 
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -35,28 +34,39 @@ public class SecurityConfig  {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+
+            http
                 .csrf(Customizer.withDefaults())
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html"
+                                "/swagger-ui.html",
+                                "/actuator",
+                                "/actuator/**"
                         ).permitAll()
-                        .requestMatchers("/api/quests/fetch").permitAll()
+                        .requestMatchers("/api/orders/place-from-cart**").permitAll()
+                        .requestMatchers("/api/orders/user/**").permitAll()
+                        .requestMatchers("/api/cart/**").permitAll()
+                        .requestMatchers("/api/product-prices").permitAll()
+                        .requestMatchers("/api/product-prices/**").permitAll()
+                        .requestMatchers("/api/cart/update").permitAll()
+                        .requestMatchers("/gmail/oauth2/**").permitAll()
+                        .requestMatchers("/api/quests/fetch**").permitAll()
                         .requestMatchers("/api/quests/recommend").permitAll()
                         .requestMatchers("/api/quests/detail").permitAll()
-                        .requestMatchers("/api/store/products").permitAll()
+                        .requestMatchers("/api/product-view**").permitAll()
+                        .requestMatchers("/api/product-view/by-country**").permitAll()
                         .requestMatchers("/login/oauth2/code/google").permitAll()
                         .requestMatchers("/api/user/info").permitAll()
                         .requestMatchers("/api/v1/document/*/file/*").permitAll()
-
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()              // Secure all other endpoints
                 ).oauth2Login(oauth2 -> oauth2
                         .loginPage("/oauth2/authorization/google")
-                        .successHandler(this.successHandler)).csrf(AbstractHttpConfigurer::disable)
+                        .successHandler(this.successHandler))
+                    .csrf(AbstractHttpConfigurer::disable)
                 .logout(logout -> logout
                         .logoutUrl("/api/logout")  // ✅ Ensures backend logout is triggered
                         .logoutSuccessHandler((request, response, authentication) -> {
@@ -80,6 +90,7 @@ public class SecurityConfig  {
         config.addAllowedOrigin(appProperties.getFrontendUrl());
         config.addAllowedMethod("GET");  // Allow all HTTP methods (GET, POST, etc.)
         config.addAllowedMethod("POST");  // Allow all HTTP methods (GET, POST, etc.)
+        config.addAllowedMethod("PUT");
         config.addAllowedMethod("OPTIONS");
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
         config.setAllowCredentials(true);

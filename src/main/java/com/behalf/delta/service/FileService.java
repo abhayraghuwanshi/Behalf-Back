@@ -6,11 +6,15 @@ import io.minio.PutObjectArgs;
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class FileService {
@@ -50,6 +54,21 @@ public class FileService {
         }
     }
 
+    public List<String> uploadMultiple(String bucketName, List<MultipartFile> files) {
+        List<String> urls = new ArrayList<>();
+        for (MultipartFile file : files) {
+            try {
+                String uniqueFileName = UUID.randomUUID().toString();
+                uploadFile(uniqueFileName, file.getBytes(), bucketName);
+                String url = getFileUrl(bucketName, uniqueFileName);
+                urls.add(url);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to upload file: " + e.getMessage(), e);
+            }
+        }
+        return urls;
+    }
+
     private String getContentType(String fileName) {
         // Simple content type detection based on file extension
         if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
@@ -80,6 +99,6 @@ public class FileService {
         }
     }
     public String getFileUrl(String bucketName, String fileName) {
-        return String.format("https://bucket-production-9ee7.up.railway.app/%s/%s", bucketName, fileName); // Adjust URL if MinIO is running on a different host or port
+        return String.format("%s/%s", bucketName, fileName); // Adjust URL if MinIO is running on a different host or port
     }
 }

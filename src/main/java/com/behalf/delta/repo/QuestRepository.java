@@ -2,6 +2,7 @@ package com.behalf.delta.repo;
 
 import com.behalf.delta.entity.QuestMetadata;
 import com.behalf.delta.entity.dto.QuestMetadataDTO;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,9 +20,12 @@ public interface QuestRepository extends JpaRepository<QuestMetadata, Long> {
     @Query("SELECT new com.behalf.delta.entity.dto.QuestMetadataDTO(" +
             "q.id, q.questCreatorId, q.questInstructions, q.questValidity, " +
             "q.questReward, q.creationTimestamp, q.lastModifiedTimestamp, " +
-            "q.questStatus, q.imageUrl, q.locationFrom, q.locationTo, q.questCurrency,u) " +
-            "FROM QuestMetadata q JOIN UserInformation u ON q.questCreatorId = u.id")
-    List<QuestMetadataDTO> fetchMergedQuestData();
+            "q.questStatus, q.imageUrl, q.locationFrom, q.locationTo, q.questCurrency, u) " +
+            "FROM QuestMetadata q " +
+            "JOIN UserInformation u ON q.questCreatorId = u.id " +
+            "WHERE ( q.locationFrom = :location OR q.locationTo = :location)")
+    Page<QuestMetadataDTO> fetchMergedQuestData(@Param("location") String location, Pageable pageable);
+
 
     @Query("SELECT q FROM QuestMetadata q WHERE q.questCreatorId = :userID OR q.id IN :involvedQuestIds")
     List<QuestMetadata> fetchQuestsByUserInvolvement(@Param("userID") Long userID,
