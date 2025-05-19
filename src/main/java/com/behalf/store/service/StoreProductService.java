@@ -5,7 +5,7 @@ import com.behalf.store.model.Product;
 
 import java.util.List;
 
-public interface ProductService {
+public interface StoreProductService {
     Product createProduct(Product product);
     Product updateProduct(Long id, Product updatedProduct);
     Product getProductById(Long id);

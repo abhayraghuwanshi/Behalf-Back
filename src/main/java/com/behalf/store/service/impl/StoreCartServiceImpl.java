@@ -4,9 +4,8 @@ import com.behalf.store.mapper.ShopMapper;
 import com.behalf.store.model.*;
 import com.behalf.store.model.dto.CartDTO;
 import com.behalf.store.repo.*;
-import com.behalf.store.service.CartService;
+import com.behalf.store.service.StoreCartService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -17,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CartServiceImpl implements CartService {
+public class StoreCartServiceImpl implements StoreCartService {
 
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;

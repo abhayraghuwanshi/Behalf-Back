@@ -1,7 +1,7 @@
 package com.behalf.store.web;
 
 import com.behalf.store.model.ProductInventory;
-import com.behalf.store.service.InventoryService;
+import com.behalf.store.service.StoreInventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import java.util.List;
 public class StoreInventoryController {
 
     @Autowired
-    private InventoryService inventoryService;
+    private StoreInventoryService inventoryService;
 
     @PostMapping
     // @PreAuthorize("hasRole('STORE_MANAGER')")

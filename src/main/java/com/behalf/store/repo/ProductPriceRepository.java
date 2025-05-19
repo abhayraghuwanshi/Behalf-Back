@@ -24,4 +24,7 @@ public interface ProductPriceRepository extends JpaRepository<ProductPrice, Long
     ProductPrice findActivePrice(@Param("productId") Long productId,
                                  @Param("storeId") Long storeId,
                                  @Param("today") LocalDate today);
+
+    List<ProductPrice> findByProductIdAndEffectiveFromBeforeAndEffectiveToAfter(Long productId, LocalDate from, LocalDate to);
+
 }

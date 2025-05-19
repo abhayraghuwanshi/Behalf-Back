@@ -3,18 +3,18 @@ package com.behalf.store.service.impl;
 
 import com.behalf.store.model.Product;
 import com.behalf.store.repo.ProductRepository;
-import com.behalf.store.service.ProductService;
+import com.behalf.store.service.StoreProductService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+public class StoreProductServiceImpl implements StoreProductService {
 
     private final ProductRepository productRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public StoreProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 

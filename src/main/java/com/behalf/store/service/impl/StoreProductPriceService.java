@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ProductPriceService {
+public class StoreProductPriceService {
 
     @Autowired private ProductPriceRepository repository;
     @Autowired private ProductRepository productRepository;

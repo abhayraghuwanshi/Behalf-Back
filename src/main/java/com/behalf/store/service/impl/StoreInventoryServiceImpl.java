@@ -5,14 +5,14 @@ import com.behalf.store.model.ProductInventory;
 import com.behalf.store.model.Store;
 import com.behalf.store.repo.ProductInventoryRepository;
 import com.behalf.store.repo.StoreRepository;
-import com.behalf.store.service.InventoryService;
+import com.behalf.store.service.StoreInventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class InventoryServiceImpl implements InventoryService {
+public class StoreInventoryServiceImpl implements StoreInventoryService {
 
     @Autowired
     private ProductInventoryRepository inventoryRepository;

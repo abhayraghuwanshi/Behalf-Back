@@ -2,18 +2,18 @@ package com.behalf.store.service.impl;
 
 import com.behalf.store.model.Discount;
 import com.behalf.store.repo.DiscountRepository;
-import com.behalf.store.service.DiscountService;
+import com.behalf.store.service.StoreDiscountService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class DiscountServiceImpl implements DiscountService {
+public class StoreDiscountServiceImpl implements StoreDiscountService {
 
     private final DiscountRepository discountRepository;
 
-    public DiscountServiceImpl(DiscountRepository discountRepository) {
+    public StoreDiscountServiceImpl(DiscountRepository discountRepository) {
         this.discountRepository = discountRepository;
     }
 

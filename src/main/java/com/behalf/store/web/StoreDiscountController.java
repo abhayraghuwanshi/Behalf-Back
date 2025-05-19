@@ -2,7 +2,7 @@ package com.behalf.store.web;
 
 
 import com.behalf.store.model.Discount;
-import com.behalf.store.service.DiscountService;
+import com.behalf.store.service.StoreDiscountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,9 +12,9 @@ import java.util.List;
 @RequestMapping("/api/discounts")
 public class StoreDiscountController {
 
-    private final DiscountService discountService;
+    private final StoreDiscountService discountService;
 
-    public StoreDiscountController(DiscountService discountService) {
+    public StoreDiscountController(StoreDiscountService discountService) {
         this.discountService = discountService;
     }
 

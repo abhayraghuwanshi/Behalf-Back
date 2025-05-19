@@ -2,7 +2,7 @@ package com.behalf.store.web;
 
 import com.behalf.delta.service.FileService;
 import com.behalf.store.model.Product;
-import com.behalf.store.service.ProductService;
+import com.behalf.store.service.StoreProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class StoreProductController {
 
-    private final ProductService productService;
+    private final StoreProductService storeProductService;
 
     private final FileService fileService;
 
@@ -34,29 +34,29 @@ public class StoreProductController {
         }
 
         product.setImageUrls(imageUrls);
-        Product created = productService.createProduct(product);
+        Product created = storeProductService.createProduct(product);
         return ResponseEntity.ok(created);
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProduct(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.getProductById(id));
+        return ResponseEntity.ok(storeProductService.getProductById(id));
     }
 
     @GetMapping()
     public ResponseEntity<List<Product>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+        return ResponseEntity.ok(storeProductService.getAllProducts());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        return ResponseEntity.ok(productService.updateProduct(id, product));
+        return ResponseEntity.ok(storeProductService.updateProduct(id, product));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
+        storeProductService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
 }

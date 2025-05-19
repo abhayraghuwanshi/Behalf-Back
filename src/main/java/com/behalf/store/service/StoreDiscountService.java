@@ -4,7 +4,7 @@ import com.behalf.store.model.Discount;
 
 import java.util.List;
 
-public interface DiscountService {
+public interface StoreDiscountService {
     Discount createDiscount(Discount discount);
     Discount updateDiscount(Long id, Discount updatedDiscount);
     Discount getDiscountById(Long id);

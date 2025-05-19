@@ -2,13 +2,10 @@ package com.behalf.store.service.impl;
 
 import com.behalf.store.cons.OrderStatus;
 import com.behalf.store.model.*;
-import com.behalf.store.model.dto.StoreOrderDTO;
 import com.behalf.store.repo.*;
-import com.behalf.store.service.IStoreOrderService;
 import com.behalf.store.service.StoreOrderService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,7 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class StoreOrderServiceImpl implements IStoreOrderService {
+public class StoreOrderServiceImpl implements StoreOrderService {
 
     private final CartRepository cartRepository;
     private final ProductPriceRepository productPriceRepository;

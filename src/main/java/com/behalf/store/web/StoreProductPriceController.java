@@ -1,7 +1,7 @@
 package com.behalf.store.web;
 
 import com.behalf.store.model.dto.ProductPriceDTO;
-import com.behalf.store.service.impl.ProductPriceService;
+import com.behalf.store.service.impl.StoreProductPriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,10 +9,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/product-prices")
-public class ProductPriceController {
+public class StoreProductPriceController {
 
     @Autowired
-    private ProductPriceService service;
+    private StoreProductPriceService service;
 
     @PostMapping
     public ProductPriceDTO create(@RequestBody ProductPriceDTO dto) {

@@ -1,13 +1,13 @@
 package com.behalf.store.service;
 
 import com.behalf.store.model.StoreOrder;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface StoreOrderService {
-    List<StoreOrder> getOrdersByStatus(String status);
-    List<StoreOrder> getAllOrders();
-    StoreOrder placeOrder(StoreOrder storeOrder);
-    StoreOrder checkout(StoreOrder storeOrder);
-    List<StoreOrder> getOrdersByUser(Long userId);
+    StoreOrder placeOrderFromCart(Long userId, String address, String country);
+
+    List<StoreOrder> findByUserIdOrderByCreatedAtDesc(Long userId);
 }

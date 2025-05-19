@@ -4,10 +4,8 @@ package com.behalf.store.web;
 import com.behalf.store.mapper.ShopMapper;
 import com.behalf.store.model.StoreOrder;
 import com.behalf.store.model.dto.StoreOrderDTO;
-import com.behalf.store.service.IStoreOrderService;
 import com.behalf.store.service.StoreOrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StoreOrderController {
 
-    private final IStoreOrderService storeOrderService;
+    private final StoreOrderService storeOrderService;
 
     @PostMapping("/place-from-cart")
     public ResponseEntity<StoreOrderDTO> placeOrderFromCart(

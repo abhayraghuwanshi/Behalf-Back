@@ -13,4 +13,7 @@ public interface ProductInventoryRepository extends JpaRepository<ProductInvento
     List<ProductInventory> findAllById(Long productId);
     List<ProductInventory> findByStoreId(Long storeId);
     List<ProductInventory> findByStoreIdIn(List<Long> storeIds);
+
+    List<ProductInventory> findByStoreIdInAndProductId(List<Long> storeIds, Long productId);
+
 }

@@ -31,4 +31,11 @@ public interface DiscountRepository extends JpaRepository<Discount, Long> {
     Discount findActiveDiscount(@Param("productId") Long productId,
                                 @Param("storeId") Long storeId,
                                 @Param("today") LocalDate today);
+
+    List<Discount> findByStoreIdInAndProductIdAndStartDateBeforeAndEndDateAfterAndIsActiveTrue(
+            List<Long> storeIds, Long productId, LocalDate startDate, LocalDate endDate);
+
+    Discount findFirstByProductIdAndStoreIsNullAndStartDateBeforeAndEndDateAfterAndIsActiveTrue(
+            Long productId, LocalDate startDate, LocalDate endDate);
+
 }
