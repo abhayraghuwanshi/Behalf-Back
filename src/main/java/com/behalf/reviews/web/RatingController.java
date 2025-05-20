@@ -1,23 +1,26 @@
 package com.behalf.reviews.web;
 
+import com.behalf.delta.entity.UserInformation;
+import com.behalf.delta.service.AuthService;
 import com.behalf.reviews.models.Rating;
 import com.behalf.reviews.service.RatingService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/ratings")
+@RequestMapping("")
+@RequiredArgsConstructor
 public class RatingController {
 
     private final RatingService ratingService;
+    private final AuthService authService;
 
-    public RatingController(RatingService ratingService) {
-        this.ratingService = ratingService;
-    }
-
-    @PostMapping
+    @PostMapping("/api/ratings")
     public ResponseEntity<Rating> submitRating(@RequestBody Rating rating) {
         if (rating.getUserId() == null || rating.getUserType() == null) {
             return ResponseEntity.badRequest().build();
@@ -47,10 +50,11 @@ public class RatingController {
     }
 
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<Rating>> getRatings(@PathVariable Long userId) {
+    @GetMapping("/public/api/ratings")
+    public ResponseEntity<List<Rating>> getRatings(@AuthenticationPrincipal OidcUser oidcUser) {
         // You can infer userType inside service if needed or ignore it
-        List<Rating> ratings = ratingService.getRatingsForUser(userId);
+        UserInformation userInformation = authService.getCurrentUser(oidcUser);
+        List<Rating> ratings = ratingService.getRatingsForUser(userInformation.getId());
         return ResponseEntity.ok(ratings);
     }
 

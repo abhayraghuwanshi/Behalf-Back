@@ -46,17 +46,8 @@ public class SecurityConfig  {
                                 "/actuator",
                                 "/actuator/**"
                         ).permitAll()
-                        .requestMatchers("/api/orders/place-from-cart**").permitAll()
-                        .requestMatchers("/api/orders/user/**").permitAll()
-                        .requestMatchers("/api/cart/**").permitAll()
-                        .requestMatchers("/api/product-prices").permitAll()
-                        .requestMatchers("/api/product-prices/**").permitAll()
-                        .requestMatchers("/api/cart/update").permitAll()
+                        .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/gmail/oauth2/**").permitAll()
-                        .requestMatchers("/api/quests/fetch**").permitAll()
-                        .requestMatchers("/api/quests/recommend").permitAll()
-                        .requestMatchers("/api/quests/detail").permitAll()
-                        .requestMatchers("/api/product-view**").permitAll()
                         .requestMatchers("/api/ratings/**").permitAll()
                         .requestMatchers("/login/oauth2/code/google").permitAll()
                         .requestMatchers("/api/user/info").permitAll()

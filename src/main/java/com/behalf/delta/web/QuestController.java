@@ -21,7 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 @RestController
-@RequestMapping("/api/quests")
+@RequestMapping("/")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class QuestController {
 
@@ -30,13 +30,13 @@ public class QuestController {
     private final QuestRecommendationService recommendationService;
 
 
-    @GetMapping("/detail")
+    @GetMapping("public/api/quests/detail")
     public QuestMetadataDTO getAllQuests( @RequestParam("postId") Integer questId) {
         return questService.fetchASingleQuest(questId);
 
     }
 
-    @GetMapping("/fetch")
+    @GetMapping("public/api/quests/fetch")
     public PageResponse<QuestMetadataDTO> getAllQuests(
             @RequestParam(required = false, defaultValue = "India") String userCountry,
             @RequestParam(defaultValue = "0") int page,
@@ -46,7 +46,7 @@ public class QuestController {
 
 
 
-    @GetMapping("/recommend")
+    @GetMapping("public/api/quests/recommend")
     public ResponseEntity<List<QuestMetadata>> getRecommendedQuests(
             @RequestParam("questId") Long questId,
             @RequestParam(defaultValue = "5") int limit,
@@ -56,21 +56,21 @@ public class QuestController {
         return ResponseEntity.ok(similarQuests);
     }
 
-    @PostMapping("/create")
+    @PostMapping("api/quests/create")
     @PreAuthorize("@securityService.isSameUser(authentication.principal.email, #quest.questCreatorId)")
     public QuestMetadataDTO createQuest(@RequestBody @Valid QuestMetadata quest) throws ResponseStatusException, HttpMessageNotReadableException {
 
         return questService.createQuest(quest);
     }
 
-    @PostMapping("/agreement")
+    @PostMapping("api/quests/agreement")
     @PreAuthorize("@securityService.isSameUser(authentication.principal.email, #questAgreement.questAcceptorId)")
     public ResponseEntity<String> assignedQuest(@RequestBody @Valid QuestSession questAgreement) throws ResponseStatusException, ValidationException {
             questService.assignQuest(questAgreement);
             return ResponseEntity.ok("Success");
     }
 
-    @PostMapping("/update/{questSessionId}")
+    @PostMapping("api/quests/update/{questSessionId}")
     @PreAuthorize("@securityService.isSameUser(authentication.principal.email, #questSession.questCreatorId)")
     public ResponseEntity<String> updateStatus(@PathVariable Long questSessionId,  @RequestBody QuestSession questSession){
         String status = questService.updateQuest(questSessionId, questSession);

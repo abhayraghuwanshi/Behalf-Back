@@ -1,5 +1,6 @@
 package com.behalf.store.web;
 
+import com.behalf.delta.service.AuthService;
 import com.behalf.store.model.dto.CartDTO;
 import com.behalf.store.model.dto.CartItemRequest;
 import com.behalf.store.service.StoreCartService;
@@ -8,11 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("public/api/store-cart")
 @RequiredArgsConstructor
 public class StoreCartController {
 
     private final StoreCartService storeCartService;
+
+    private final AuthService authService;
 
     private Long getUserId() {
         return null; // replace with SecurityContextHolder if needed
