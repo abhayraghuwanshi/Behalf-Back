@@ -1,8 +1,11 @@
 package com.behalf.reviews.service;
 
 
+import com.behalf.delta.entity.dto.PageResponse;
 import com.behalf.reviews.models.Rating;
 import com.behalf.reviews.repo.RatingRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -19,7 +22,8 @@ public class RatingService {
         return ratingRepository.save(rating);
     }
 
-    public List<Rating> getRatingsForUser(Long userId) {
-        return ratingRepository.findByUserId(userId);
+    public PageResponse<Rating> getRatingsForUser(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return new PageResponse<>(ratingRepository.findByUserId(userId, pageable));
     }
 }

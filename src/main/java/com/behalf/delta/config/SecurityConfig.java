@@ -48,7 +48,6 @@ public class SecurityConfig  {
                         ).permitAll()
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/gmail/oauth2/**").permitAll()
-                        .requestMatchers("/api/ratings/**").permitAll()
                         .requestMatchers("/login/oauth2/code/google").permitAll()
                         .requestMatchers("/api/user/info").permitAll()
                         .requestMatchers("/api/v1/document/*/file/*").permitAll()

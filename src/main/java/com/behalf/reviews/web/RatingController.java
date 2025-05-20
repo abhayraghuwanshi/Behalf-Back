@@ -1,6 +1,7 @@
 package com.behalf.reviews.web;
 
 import com.behalf.delta.entity.UserInformation;
+import com.behalf.delta.entity.dto.PageResponse;
 import com.behalf.delta.service.AuthService;
 import com.behalf.reviews.models.Rating;
 import com.behalf.reviews.service.RatingService;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("")
+@RequestMapping()
 @RequiredArgsConstructor
 public class RatingController {
 
@@ -51,10 +52,12 @@ public class RatingController {
 
 
     @GetMapping("/public/api/ratings")
-    public ResponseEntity<List<Rating>> getRatings(@AuthenticationPrincipal OidcUser oidcUser) {
+    public ResponseEntity<PageResponse<Rating>> getRatings(@AuthenticationPrincipal OidcUser oidcUser,
+                                                           @RequestParam(defaultValue = "0") int page,
+                                                           @RequestParam(defaultValue = "10") int size) {
         // You can infer userType inside service if needed or ignore it
         UserInformation userInformation = authService.getCurrentUser(oidcUser);
-        List<Rating> ratings = ratingService.getRatingsForUser(userInformation.getId());
+        PageResponse<Rating> ratings = ratingService.getRatingsForUser(userInformation.getId(), page, size);
         return ResponseEntity.ok(ratings);
     }
 

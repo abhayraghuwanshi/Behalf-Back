@@ -3,10 +3,15 @@ package com.behalf.delta.web;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.behalf.delta.entity.UserInformation;
 import com.behalf.delta.entity.dto.QuestDto;
+import com.behalf.delta.service.AuthService;
 import com.behalf.delta.service.QuestService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 import com.behalf.delta.entity.QuestSession;
 import com.behalf.delta.entity.Message;
@@ -18,15 +23,12 @@ import com.behalf.delta.service.QuestSessionService;
 @RestController
 @RequestMapping("/api/quests/sessions")
 @Slf4j
+@RequiredArgsConstructor
 public class QuestSessionController {
+
     private final QuestSessionService questSessionService;
-
+    private final AuthService authService;
     private final QuestService questService;
-
-    public QuestSessionController(QuestSessionService questSessionService, QuestService questService) {
-        this.questSessionService = questSessionService;
-        this.questService = questService;
-    }
 
     @PostMapping() // create new chat session
     @PreAuthorize("@securityService.isSameUser(authentication.principal.email, #sessionRequest.questAcceptorId)")
@@ -59,9 +61,10 @@ public class QuestSessionController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/{userID}")
-    public QuestDto fetchChatSession(@PathVariable Long userID) {
-        return questService.fetchById(userID);
+    @GetMapping()
+    public QuestDto fetchChatSession(@AuthenticationPrincipal OidcUser oidcUser) {
+        UserInformation userInformation = authService.getCurrentUser(oidcUser);
+        return questService.fetchById(userInformation.getId());
     }
 
 
